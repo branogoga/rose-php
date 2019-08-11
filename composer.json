@@ -1,0 +1,19 @@
+{
+    "name": "branogoga/rose-php",
+    "description": "Rose PHP Library",
+    "authors": [
+        {
+            "name": "Brano Goga",
+            "email": "brano.goga@centrum.sk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "HelloWorld": "src/"
+        }
+    }
+}
