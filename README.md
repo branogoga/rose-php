@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/branogoga/rose-php.svg?branch=master)](https://travis-ci.org/branogoga/rose-php)
+
 # rose-php
 Common tools for PHP development.
  
