@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use \PHPUnit\Framework\TestCase;
+require_once("Math.php");
 
-final class MathTest extends TestCase
+final class MathTest extends PHPUnit\Framework\TestCase
 {
     public function testAdd(): void
     {
