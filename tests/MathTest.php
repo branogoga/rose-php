@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
+use \PHPUnit\Framework\TestCase;
 
-final class AddTest extends TestCase
+final class MathTest extends TestCase
 {
     public function testAdd(): void
     {
