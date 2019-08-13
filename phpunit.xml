@@ -12,7 +12,6 @@
          stopOnIncomplete="false"
          stopOnSkipped="false"
          stopOnRisky="false"
-         syntaxCheck="true"
          bootstrap="src/bootstrap.php"
          verbose="false"
         >
