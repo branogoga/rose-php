@@ -24,11 +24,10 @@
         </whitelist>
         </filter>        
 
-        <!--
         <testsuites>
                 <testsuite name="RosePHP">
                         <directory>/src/*Test.php</directory>
+                        <directory>/tests/*Test.php</directory>
                 </testsuite>
         </testsuites>        
-        -->
 </phpunit>
