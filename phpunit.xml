@@ -7,8 +7,30 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
+         stopOnError="false"
          stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         stopOnRisky="false"
          syntaxCheck="true"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="src/bootstrap.php"
+         verbose="false"
         >
+
+        <filter>
+        <whitelist>
+                <exclude>
+                <directory>./lib/vendor/*</directory>
+                <directory>./lib/vendor/symfony/lib/*</directory>
+                </exclude>
+        </whitelist>
+        </filter>        
+
+        <!--
+        <testsuites>
+                <testsuite name="RosePHP">
+                        <directory>/src/*Test.php</directory>
+                </testsuite>
+        </testsuites>        
+        -->
 </phpunit>
