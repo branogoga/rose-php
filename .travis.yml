@@ -2,3 +2,4 @@ language: php
 php:
   - '7.2'
   - nightly
+script: phpunit --configuration phpunit.xml
