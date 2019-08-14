@@ -1,7 +1,5 @@
 parameters:
 	autoload_directories:
-		- %rootDir%/src
+		- src
 	autoload_files:
 		- vendor/autoload.php
-		- src/Math.php
-		- src/MathTest.php
