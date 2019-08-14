@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/branogoga/rose-php.svg?branch=master)](https://travis-ci.org/branogoga/rose-php)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 # rose-php
 Common tools for PHP development.
