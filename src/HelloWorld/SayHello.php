@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HelloWorld;
 
-class SayHello
+final class SayHello
 {
     public static function world()
     {
