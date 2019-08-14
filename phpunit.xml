@@ -12,7 +12,7 @@
          stopOnIncomplete="false"
          stopOnSkipped="false"
          stopOnRisky="false"
-         bootstrap="src/bootstrap.php"
+         bootstrap="vendor/autoload.php"
          verbose="false"
         >
 
