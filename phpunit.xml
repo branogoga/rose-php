@@ -28,6 +28,7 @@
         <testsuites>
                 <testsuite name="RosePHP">
                         <directory>src</directory>
+                        <directory>src/*</directory>
                 </testsuite>
         </testsuites>        
 </phpunit>
