@@ -17,10 +17,11 @@
     },
     "autoload": {
         "psr-0": {
-            "HelloWorld": "src/"
+            "Rose": "src/"
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "8"
+        "phpunit/phpunit": "8",
+        "phpstan/phpstan": "^0.11.12"
     }
 }
