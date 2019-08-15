@@ -105,7 +105,7 @@ abstract class Model
         return $count;
 	}
 
-	public function findAll( $page = 0, $limit = 10 )
+	public function findAll( $page = 0, $limit = 10 ): \Dibi\Fluent
 	{
 		$query = \dibi::getConnection()
             ->select($this->getAllTablesJoinSelectClause())
@@ -124,7 +124,7 @@ abstract class Model
         return $query;		
 	}
 
-	public function find($id, $joinTables = true )
+	public function find($id, $joinTables = true ): \Dibi\Fluent
 	{
 		$select = "*";
 		$from	= $this->getTable();
@@ -141,19 +141,35 @@ abstract class Model
             ->where(/*$this->getTableAlias().".".*/$this->getPrimaryKeyName().'=%i', $id);
 	}
 
-    public function save( &$data )
+    public function save( &$data ): bool
     {
         if(array_key_exists($this->getPrimaryKeyName(), $data) && $this->isIdValid($data[$this->getPrimaryKeyName()]))
         {
-            return $this->update($data[$this->getPrimaryKeyName()], $data);
+            $numberOfAffectedRows = $this->update($data[$this->getPrimaryKeyName()], $data);
+            if($numberOfAffectedRows > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return $this->insert($data);
+            $id = $this->insert($data);
+            if(is_int($id) && $id > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }            
     }
         
-    public function update($id, $data)
+    public function update($id, $data): int
 	{
 		if(array_key_exists($this->getPrimaryKeyName(), $data))
 		{
@@ -167,7 +183,12 @@ abstract class Model
             ->where($this->getPrimaryKeyName().'=%i', $id)			
             ->execute();
 						
-		//dibi::test( dibi::$sql );
+        //dibi::test( dibi::$sql );
+        
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL update should return number of affected rows.");
+        }
                 
         $data[$this->getPrimaryKeyName()] = $id;
             
@@ -184,7 +205,7 @@ abstract class Model
     {            
     }
 
-    public function insert(&$data)
+    public function insert(&$data): int
     {
         unset( $data[$this->getPrimaryKeyName()] );
 
@@ -199,6 +220,11 @@ abstract class Model
 
         //dibi::test( dibi::$sql );
 
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL insert should return ID of new item.");
+        }
+                
         $this->afterInsert( NULL, $data );
 
         return $result;
@@ -216,7 +242,7 @@ abstract class Model
         return null;
     }
 
-    public function delete($id) {
+    public function delete($id): int {
         $this->beforeDelete($id);
 
         if($this->getDeletedColumnName()) {
@@ -229,31 +255,46 @@ abstract class Model
 
         $this->afterDelete($id);
 
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL delete should return number of affected rows.");
+        }
+                
         return $result;
     }
 
-    private function deleteRow($id) {
+    private function deleteRow($id): int {
         $result = \dibi::getConnection()
-                ->delete($this->getTableName())
-                ->where($this->getPrimaryKeyName() . '=%i', $id)
-                ->execute();
+            ->delete($this->getTableName())
+            ->where($this->getPrimaryKeyName() . '=%i', $id)
+            ->execute();
 
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL delete should return number of affected rows.");
+        }
+                
         return $result;
     }
 
-    private function markRowAsDeleted($id) {
+    private function markRowAsDeleted($id): int {
 
         $values = [];
         $values[$this->getDeletedColumnName()] = (new \DateTimeImmutable())->format("Y-m-d H:i:s");
         
         $result = \dibi::getConnection()
-                ->update(
-                        $this->getTableName(),
-                        $values
-                        )
-                ->where($this->getPrimaryKeyName() . '=%i', $id)
-                ->execute();
+            ->update(
+                $this->getTableName(),
+                $values
+            )
+            ->where($this->getPrimaryKeyName() . '=%i', $id)
+            ->execute();
 
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL update should return number of affected rows.");
+        }
+                
         return $result;
     }
     
