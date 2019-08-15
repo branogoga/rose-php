@@ -3,3 +3,5 @@ parameters:
 		- src
 	autoload_files:
 		- vendor/autoload.php
+includes:
+    #- vendor/phpstan/phpstan-dibi/extension.neon

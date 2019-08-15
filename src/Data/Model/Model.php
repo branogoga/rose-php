@@ -44,11 +44,14 @@ abstract class Model
 	{
 	}
 
-	public function __construct()
+    private $connection = null;
+
+	public function __construct(\Dibi\Connection $connection)
 	{
+        $this->connection = $connection;
 	}
 
-	public function getAll( $joinTables = true )
+	public function getAll( $joinTables = true ): \Dibi\DataSource
 	{
 		$select = "*";
 		$from	= $this->getTable();
@@ -67,28 +70,42 @@ abstract class Model
             $sql .= " WHERE ".$this->getDeletedColumnName()." IS NULL";
         }
 		
-		return	\dibi::dataSource( $sql );
+		return	$this->connection->dataSource( $sql );
 	}
 
-	public function	isIdValid( $id ): boolean
+	public function	isIdValid( $id ): bool
 	{            
-		$count = \dibi::getConnection()
+		$result = \dibi::getConnection()
 						->select('COUNT(*)')
 						->from($this->getTableName())
 						->where( $this->getPrimaryKeyName()." = %i ", $id )
-						->execute()
-						->fetchSingle();
+                        ->execute();
+
+        if(!$result instanceof \Dibi\Result)
+        {
+            throw new \Exception("Result must be an instance of Dibi\Result.");
+        }
+
+        $count = $result->fetchSingle();
 		//Nette\Debug::dump($count);
 		return ($count == 1);				
 	}
 
 	public function count(): int
 	{
-		return \dibi::getConnection()
+		$result = \dibi::getConnection()
 						->select('COUNT(*)')
 						->from($this->getTableName())
-						->execute()
-						->fetchSingle();		
+                        ->execute();
+
+        if(!$result instanceof \Dibi\Result)
+        {
+            throw new \Exception("Result must be an instance of Dibi\Result.");
+        }
+
+        $count = $result->fetchSingle();
+
+        return $count;
 	}
 
 	public function findAll( $page = 0, $limit = 10 )
@@ -198,7 +215,7 @@ abstract class Model
     {            
     }
 
-    protected function getDeletedColumnName(): string {
+    protected function getDeletedColumnName(): ?string {
         return null;
     }
 

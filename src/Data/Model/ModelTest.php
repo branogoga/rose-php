@@ -26,7 +26,10 @@ final class ModelTest extends PHPUnit\Framework\TestCase
 {
      public function testGetTable(): void
     {
-        $model = new TestModel();
+        $config = array();
+        $connection = new \Dibi\Connection($config);
+
+        $model = new TestModel($connection);
         $this->assertEquals(
             " table-name AS tmp ",
             $model->getTable()

@@ -13,10 +13,20 @@
     "prefer-stable": true,
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.2.0"
+        "php": ">=7.2.0",
+        "dibi/dibi": "^4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "8",
-        "phpstan/phpstan": "^0.11.12"
+        "phpstan/phpstan": "^0.11.12",
+        "phpstan/phpstan-dibi": "^0.11.1",
+        "phpstan/extension-installer": "^1.0"
+    },
+    "extra": {
+        "phpstan": {
+        "includes": [
+            "extension.neon"
+        ]
+        }
     }
 }
