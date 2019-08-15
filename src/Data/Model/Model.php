@@ -44,11 +44,8 @@ abstract class Model
 	{
 	}
 
-    private $connection = null;
-
-	public function __construct(\Dibi\Connection $connection)
+	public function __construct()
 	{
-        $this->connection = $connection;
 	}
 
 	public function getAll( $joinTables = true ): \Dibi\DataSource
@@ -70,7 +67,7 @@ abstract class Model
             $sql .= " WHERE ".$this->getDeletedColumnName()." IS NULL";
         }
 		
-		return	$this->connection->dataSource( $sql );
+		return	\dibi::dataSource( $sql );
 	}
 
 	public function	isIdValid( $id ): bool
