@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HelloWorld;
+namespace Rose\HelloWorld;
 
 final class SayHello
 {
