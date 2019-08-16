@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once("Color.php");
-
 final class ColorTest extends PHPUnit\Framework\TestCase
 {
 	public function		testGradient()

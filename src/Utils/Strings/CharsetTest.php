@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once("Charset.php");
-
 final class CharsetTest extends PHPUnit\Framework\TestCase
 {
 	public function		testRemovePunctuation()

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Rose\Application\UI\Presenter;
 
-require_once("Presenter.php");
-
 abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;

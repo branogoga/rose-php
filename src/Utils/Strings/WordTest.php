@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once("Word.php");
-
 final class WordTest extends PHPUnit\Framework\TestCase
 {
      public function testCleanUp(): void
