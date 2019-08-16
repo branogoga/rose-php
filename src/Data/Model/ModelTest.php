@@ -11,14 +11,21 @@ class TestModel extends \Rose\Data\Model\Model
         return "table-name";
     }
 
-    public 	function	getPrimaryKeyName(): string
+    public 	function    getPrimaryKeyName(): string
     {
         return "id-column-name";
     }
 
-    public function     getTable(): string
+    public function getTable(): string
     {
         return parent::getTable();
+    }
+
+    public function getEmptyObject(): array 
+    {
+        $entity = array();
+        $entity[$this->getPrimaryKeyName()] = 0;
+        return $entity;
     }
 }
 

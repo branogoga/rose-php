@@ -11,7 +11,8 @@ abstract class Model
 {
      use \Nette\SmartObject;
     
-	/** @var string */
+    /** @var string */
+    abstract public     function    getEmptyObject(): array;
 	abstract protected 	function	getTableName(): string;
 	abstract public 	function	getPrimaryKeyName(): string;
 
