@@ -16,7 +16,7 @@ abstract class ApiPresenter extends Presenter
     public function renderList(): void
     {
         $model=  $this->getModel();
-        $list = $model->findAll()->fetchAll();
+        $list = $model->getAll()->fetchAll();
 
         $this->sendResponse(
             new \Nette\Application\Responses\JsonResponse(
