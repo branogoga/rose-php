@@ -14,6 +14,11 @@ class MockApiPresenter extends \Rose\Application\UI\Presenter\ApiPresenter
         $errors = array();
         return $errors;
     }
+
+    protected function getResource(): string
+    {
+        return "mock-api";
+    }
 }
 
 final class ApiPresenterTest extends PHPUnit\Framework\TestCase

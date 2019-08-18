@@ -8,9 +8,19 @@ abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;
     protected abstract function validate(array $data): array;
+    protected abstract function getResource(): string;
+
+    protected function getActionListResource()
+    {
+        return $this->getResource();
+    }
 
     public function actionList(): void
-    {		
+    {
+        if(!$this->user->isAllowed($this->getActionListResource(), "list"))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
     }
 
     public function renderList(): void
@@ -25,8 +35,17 @@ abstract class ApiPresenter extends Presenter
         );                
     }
 
+    protected function getActionShowResource(int $id)
+    {
+        return $this->getResource();
+    }
+
     public function actionShow( int $id ): void
     {		
+        if(!$this->user->isAllowed($this->getActionShowResource($id), "show"))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
     }
 
     public function renderShow( int $id ): void
@@ -61,8 +80,17 @@ abstract class ApiPresenter extends Presenter
         }        
     }
 
+    protected function getActionAddResource()
+    {
+        return $this->getResource();
+    }
+
     public function actionAdd(): void
     {
+        if(!$this->user->isAllowed($this->getActionAddResource(), "add"))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
     }
 
     public function renderAdd(): void
@@ -124,8 +152,17 @@ abstract class ApiPresenter extends Presenter
     {            
     }
 
+    protected function getActionEditResource(int $id)
+    {
+        return $this->getResource();
+    }
+
     public function actionEdit( int $id ): void
     {
+        if(!$this->user->isAllowed($this->getActionEditResource($id), "edit"))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
     }
 
     public function renderEdit( int $id ): void
@@ -186,8 +223,18 @@ abstract class ApiPresenter extends Presenter
     {            
     }
     
+    protected function getActionDeleteResource(int $id)
+    {
+        return $this->getResource();
+    }
+
     public function actionDelete( int $id ): void
     {
+        if(!$this->user->isAllowed($this->getActionDeleteResource($id), "delete"))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
+
         $model = $this->getModel();
         $item = $this->getEntityAsArray($id);
         \Tracy\Debugger::barDump($item);
