@@ -427,7 +427,7 @@ abstract class Model
         {
             if(count($columns) == 0)
             {
-                throw \Exception();
+                throw new \Rose\Exceptions\InvalidArgumentException();
             }
 
             $result = $columns[0];
