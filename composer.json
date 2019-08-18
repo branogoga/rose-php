@@ -2,20 +2,18 @@
     "name": "branogoga/rose-php",
     "description": "Rose PHP Library",
     "version": "0.1.0",
-    "type" : "library",
-    "authors": [
-        {
-            "name": "Brano Goga",
-            "email": "brano.goga@centrum.sk"
-        }
-    ],
+    "type": "library",
+    "authors": [{
+        "name": "Brano Goga",
+        "email": "brano.goga@centrum.sk"
+    }],
     "readme": "./README.md",
     "prefer-stable": true,
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.2.0",
-        "dibi/dibi": "^4.0",
-        "nette/nette": "^3.0"
+        "dibi/dibi": "~4",
+        "nette/nette": "~3"
     },
     "require-dev": {
         "phpunit/phpunit": "8",
@@ -29,9 +27,9 @@
     },
     "extra": {
         "phpstan": {
-        "includes": [
-            "extension.neon"
-        ]
+            "includes": [
+                "extension.neon"
+            ]
         }
     }
 }

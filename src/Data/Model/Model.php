@@ -12,9 +12,9 @@ abstract class Model
      use \Nette\SmartObject;
     
     /** @var string */
-    abstract public     function    getEmptyObject(): array;
 	abstract protected 	function	getTableName(): string;
 	abstract public 	function	getPrimaryKeyName(): string;
+    abstract public     function    getEmptyObject(): array;
 
 	/// Alias of main table. Used to specify for conflicting rows 
 	/// in JOINed tables (find, getAll)).
@@ -28,15 +28,25 @@ abstract class Model
 		return	" ".$this->getTableName()." AS ".$this->getTableAlias()." ";
 	}
 
-	/// Returns SELECT clause with joined all tables related to this query
-	/// Used to resolve conflicts in the column names
-	protected  function	getAllTablesJoinSelectClause(): string
+	protected  function	getSelectClause()
 	{
-		return " * ";
+            return "*"; 
+	}
+        
+	/// Vrati SELECT klazulu pre dotaz na vsetky zaujimave tabulky
+	/// Prepisanim sa daju riesit konflikty nazvov stlpcov
+	protected  function	getAllTablesJoinSelectClause( array $joinedTables = [] )
+	{
+            return $this->getSelectClause();
 	}
 
+    protected function      getFromClause()
+    {
+        return $this->getSelectClause();
+    }
+
 	/// Returns FROM clause with joined tables
-	protected  function	getAllTablesJoinFromClause(): string
+	protected  function	getAllTablesJoinFromClause( array $joinedTables = [] ): string
 	{
 		return $this->getTable();
 	}
@@ -49,15 +59,15 @@ abstract class Model
 	{
 	}
 
-	public function getAll( $joinTables = true ): \Dibi\DataSource
+	public function getAll( bool $joinTables = true, array $joinedTables = [] ): \Dibi\DataSource
 	{
-		$select = "*";
+		$select = $this->getFromClause();
 		$from	= $this->getTable();
 		
 		if($joinTables)
 		{
-			$select = $this->getAllTablesJoinSelectClause();
-			$from	= $this->getAllTablesJoinFromClause();
+			$select = $this->getAllTablesJoinSelectClause( $joinedTables );
+			$from	= $this->getAllTablesJoinFromClause( $joinedTables );
 		}	
 		
 		$sql = "SELECT ".$select."
@@ -70,9 +80,37 @@ abstract class Model
 		
 		return	\dibi::dataSource( $sql );
 	}
+    
+	public function getAllNew( bool $joinTables = true, array $joinedTables = [] ): \Dibi\Fluent
+	{
+            $select = $this->getFromClause();
+            $from	= $this->getTable();
 
-	public function	isIdValid( $id ): bool
+            if($joinTables)
+            {
+                $select = $this->getAllTablesJoinSelectClause( $joinedTables );
+                $from	= $this->getAllTablesJoinFromClause( $joinedTables );
+            }	
+
+            return \dibi::select($select)->from($from);
+	}
+
+	//public function count()
+	//{
+    //        return \Dibi::getConnection()
+    //            ->select('COUNT(*)')
+    //            ->from($this->getTableName())
+    //            ->execute()
+    //            ->fetchSingle();		
+	//}
+    
+	public function	isIdValid( int $id ): bool
 	{            
+        if(!is_numeric($id))
+        {
+            return false;
+        }
+        
 		$result = \dibi::getConnection()
 						->select('COUNT(*)')
 						->from($this->getTableName())
@@ -81,7 +119,7 @@ abstract class Model
 
         if(!$result instanceof \Dibi\Result)
         {
-            throw new \Exception("Result must be an instance of Dibi\Result.");
+            throw new \Exception("Result must be an instance of \Dibi\Result.");
         }
 
         $count = $result->fetchSingle();
@@ -98,7 +136,7 @@ abstract class Model
 
         if(!$result instanceof \Dibi\Result)
         {
-            throw new \Exception("Result must be an instance of Dibi\Result.");
+            throw new \Exception("Result must be an instance of \Dibi\Result.");
         }
 
         $count = $result->fetchSingle();
@@ -106,11 +144,12 @@ abstract class Model
         return $count;
 	}
 
-	public function findAll( $page = 0, $limit = 10 ): \Dibi\Fluent
+    const   NoLimit = -1;
+	public function findAll( int $page = 0, int $limit = 10, array $joinedTables = [] ): \Dibi\Fluent
 	{
 		$query = \dibi::getConnection()
-            ->select($this->getAllTablesJoinSelectClause())
-            ->from($this->getAllTablesJoinFromClause())
+            ->select($this->getAllTablesJoinSelectClause($joinedTables))
+            ->from($this->getAllTablesJoinFromClause($joinedTables))
             ;
         
         if($this->getDeletedColumnName())
@@ -118,22 +157,25 @@ abstract class Model
             $query->where($this->getDeletedColumnName()." IS NULL");
         }
         
-        $query
+        if($limit > 0)
+        {
+          $query
             ->limit($limit)
             ->offset($page*$limit);
+        }
         
         return $query;		
 	}
 
-	public function find($id, $joinTables = true ): \Dibi\Fluent
+	public function find(int $id, bool $joinTables = true, array $joinedTables = [] ): \Dibi\Fluent
 	{
-		$select = "*";
+		$select = $this->getSelectClause();
 		$from	= $this->getTable();
 		
 		if($joinTables)
 		{
-			$select = $this->getAllTablesJoinSelectClause();
-			$from	= $this->getAllTablesJoinFromClause();
+			$select = $this->getAllTablesJoinSelectClause($joinedTables);
+			$from	= $this->getAllTablesJoinFromClause($joinedTables);
 		}
 			
 		return \dibi::getConnection()
@@ -142,7 +184,37 @@ abstract class Model
             ->where(/*$this->getTableAlias().".".*/$this->getPrimaryKeyName().'=%i', $id);
 	}
 
-    public function save( &$data ): bool
+    public function findLast( bool $joinTables = true, array $joinedTables = [] )
+    {
+        $select = "*";
+        $from	= $this->getTable();
+
+        if($joinTables)
+        {
+            $select = $this->getAllTablesJoinSelectClause($joinedTables);
+            $from   = $this->getAllTablesJoinFromClause($joinedTables);
+        }
+
+        $query = \dibi::getConnection()
+            ->select($select)
+            ->from($from)
+            ->orderBy( $this->getPrimaryKeyName(), 'DESC' );
+            //->limit(1)
+            //->offset(0);
+
+        //echo $query->__toString();
+
+        return $query;
+    }
+    
+    public function getLastId(): int
+    {
+        $query = $this->findLast(false);
+        $data = $query->fetch();
+        return $data[$this->getPrimaryKeyName()];
+    }
+
+    public function save( array &$data ): bool
     {
         if(array_key_exists($this->getPrimaryKeyName(), $data) && $this->isIdValid($data[$this->getPrimaryKeyName()]))
         {
@@ -170,7 +242,30 @@ abstract class Model
         }            
     }
         
-    public function update($id, $data): int
+    protected function beforeUpdate( int $id, array &$data ): void
+    {            
+    }
+    
+    protected function doUpdate( int $id, array $data ): int
+    {
+        $result = \dibi::getConnection()
+            ->update($this->getTableName(), $data)
+            ->where($this->getPrimaryKeyName().'=%i', $id)			
+            ->execute();
+
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL update should return number of affected rows.");
+        }
+                
+        return $result;
+    }
+               
+    protected function afterUpdate( int $id, array $data ): void
+    {            
+    }
+
+    public function update(int $id, array $data): int
 	{
 		if(array_key_exists($this->getPrimaryKeyName(), $data))
 		{
@@ -179,18 +274,10 @@ abstract class Model
                 
         $this->beforeUpdate( $id, $data );
 		
-		$result = \dibi::getConnection()
-            ->update($this->getTableName(), $data)
-            ->where($this->getPrimaryKeyName().'=%i', $id)			
-            ->execute();
+		$result = $this->doUpdate($id, $data);
 						
-        //dibi::test( dibi::$sql );
+        //dibi::test( \dibi::$sql );
         
-        if(!is_int($result))
-        {
-            throw new \Exception("SQL update should return number of affected rows.");
-        }
-                
         $data[$this->getPrimaryKeyName()] = $id;
             
         $this->afterUpdate( $id, $data );
@@ -198,61 +285,69 @@ abstract class Model
 		return $result;
 	}
         
-    protected function beforeUpdate( $id, &$data ): void
+    protected function beforeInsert( array &$data ): void
     {            
     }
     
-    protected function afterUpdate( $id, $data ): void
+    protected function afterInsert( int $id, array $data ): void
     {            
     }
-
-    public function insert(&$data): int
+    
+    protected function doInsert( array $data ): int
+    {
+        $result = \dibi::getConnection()
+            ->insert($this->getTableName(), $data)
+            ->execute();
+        
+        if(!is_int($result))
+        {
+            throw new \Exception("SQL insert should return ID of new item.");
+        }
+                
+        return $result;
+    }
+    
+    public function insert(array &$data): int
     {
         unset( $data[$this->getPrimaryKeyName()] );
 
         $this->beforeInsert( $data );
 
         //Debug::fireLog(__METHOD__);	
-        $result = \dibi::getConnection()
-            ->insert($this->getTableName(), $data)
-            ->execute();
+        $result = $this->doInsert($data);
         
-        $data[$this->getPrimaryKeyName()] = \dibi::getInsertId();
+        $id = \dibi::getInsertId();
+        $data[$this->getPrimaryKeyName()] = $id;
 
-        //dibi::test( dibi::$sql );
+        //dibi::test( \dibi::$sql );
 
-        if(!is_int($result))
-        {
-            throw new \Exception("SQL insert should return ID of new item.");
-        }
-                
-        $this->afterInsert( NULL, $data );
+        $this->afterInsert( $id, $data );
 
         return $result;
     }
     
-    protected function beforeInsert( &$data ): void
+    protected function beforeDelete(int $id): void
     {            
     }
     
-    protected function afterInsert( $id, $data ): void
+    protected function afterDelete(int $id): void
     {            
     }
-
-    protected function getDeletedColumnName(): ?string {
-        return null;
-    }
-
-    public function delete($id): int {
+    
+    public function delete(int $id): int 
+    {
         $this->beforeDelete($id);
 
-        if($this->getDeletedColumnName()) {
+        if($this->getDeletedColumnName()) 
+        {
             $result = $this->markRowAsDeleted($id);
-        } else {
+        }
+        else 
+        {
             $result = $this->deleteRow($id);            
         }
 
-        //dibi::test( dibi::$sql );
+        //dibi::test( \dibi::$sql );
 
         $this->afterDelete($id);
 
@@ -264,7 +359,20 @@ abstract class Model
         return $result;
     }
 
-    private function deleteRow($id): int {
+    public function deleteLast()
+    {
+        $data = $this->findLast(false)->fetch();
+        
+        $this->delete(
+            $data[$this->getPrimaryKeyName()]
+        );
+    }
+        
+    protected function getDeletedColumnName(): ?string {
+        return null;
+    }
+
+    private function deleteRow(int $id): int {
         $result = \dibi::getConnection()
             ->delete($this->getTableName())
             ->where($this->getPrimaryKeyName() . '=%i', $id)
@@ -278,7 +386,7 @@ abstract class Model
         return $result;
     }
 
-    private function markRowAsDeleted($id): int {
+    private function markRowAsDeleted(int $id): int {
 
         $values = [];
         $values[$this->getDeletedColumnName()] = (new \DateTimeImmutable())->format("Y-m-d H:i:s");
@@ -297,13 +405,151 @@ abstract class Model
         }
                 
         return $result;
-    }
+    }    
     
-    protected function beforeDelete($id): void
-    {            
-    }
+        public  function hasFulltextIndex()
+        {
+            return false;
+        }
+        
+        public function  getFulltextIndexColumns(): array
+        {
+            throw new \Rose\Exceptions\NotImplementedException();
+            return [];            
+        }
+        
+        private function addTablePrefixToColumnName( string $column ): string
+        {
+            return $this->getTableName().".".$column;
+        }
+        
+        private function getFulltextIndexColumnsString( array $columns ): string
+        {
+            if(count($columns) == 0)
+                throw \Rose\Exceptions\InvalidArgumentException();
+
+            $result = $columns[0];
+            
+            //Tracy\Debugger::dump($columns);
+                    
+            for($i=1; $i < count($columns); $i++)
+            {
+                $column = $columns[$i];                
+                $result .= ','.$column;
+            }
+            
+            //Tracy\Debugger::dump($result);
+            
+            return $result;
+        }
+        
+        protected function createFulltextIndex( array $columns ): void
+        {
+            $query = "
+                ALTER TABLE     ".$this->getTableName()."
+                ADD FULLTEXT    vyhladavanie( ".
+                                    $this->getFulltextIndexColumnsString(
+                                            $this->getFulltextIndexColumns()
+                                            )
+                                   ." )
+                ";
+            
+            //dibi::test( $query );            
+            \dibi::query( $query );
+        }
+        
+        protected function removeFulltextIndex(): void
+        {
+            $query = "
+                ALTER TABLE     ".$this->getTableName()."
+                DROP INDEX      vyhladavanie
+                ";
+            
+            //dibi::test( $query );
+            \dibi::query( $query );            
+        }
+        
+        public function search( string $query ): \Dibi\Result
+        {
+            try {
+                $this->createFulltextIndex(
+                        $this->getFulltextIndexColumns()
+                        );
+            }
+            catch( \Exception $e )
+            {
+                // Index already created.
+            }
+            
+            $indexColumns = $this->getFulltextIndexColumnsString($this->getFulltextIndexColumns());
+		
+            $select = $this->getAllTablesJoinSelectClause();
+            $from   = $this->getAllTablesJoinFromClause();
+            
+            $querySearch = "
+                SELECT      $select, MATCH($indexColumns) AGAINST(%s) AS score
+                FROM        ".$from."
+                WHERE       MATCH($indexColumns) AGAINST(%s)
+                ORDER BY    score DESC
+                ";
+            
+            //dibi::test( $querySearch, $q, $q );
+            
+            $result = \dibi::query( $querySearch, $query, $query );        
+            
+            //$this->removeFulltextIndex();
+            
+            return $result;
+        }
+        
+        public function queryRegExp( string $query, string $column, bool $joinTables = true, array $joinedTables = [] )
+        {
+            $regExp = \Rose\Utils\Strings\Charset::makePunctuationInsensitiveSearchRegularExpression($query);
+            //Tracy\Debugger::dump($regExp);
+
+            
+            $select = "*";
+            $from	= $this->getTable();
+		
+            if($joinTables)
+            {
+                $select = $this->getAllTablesJoinSelectClause($joinedTables);
+                $from	= $this->getAllTablesJoinFromClause($joinedTables);
+            }	
+
+            $sql = "SELECT ".$select."
+                    FROM ".$from."
+                    WHERE $column REGEXP '$regExp'
+                    ";
+            
+            return $sql;
+        }
+        
+        public function searchRegExp( string $query, string $column, $joinTables = true, array $joinedTables = [] )
+        {
+            $sql = $this->queryRegExp( $query, $column, $joinTables, $joinedTables );
+            //dibi::test($sql,$regExp);
+            return \dibi::query($sql);
+        }
+        
+        public function getNextId(): int
+        {
+            $sql = "SHOW TABLE STATUS LIKE '".$this->getTableName()."'";
+            
+            //Dibi::test($sql);
+            
+            $result = \dibi::query($sql)->fetch();
+            //Tracy\Debugger::dump($result);
+            
+            return $result['Auto_increment'];
+        }
+        
+        public function setNextId( int $id ): \Dibi\Result
+        {
+            $sql = "ALTER TABLE ".$this->getTableName()." AUTO_INCREMENT = $id";
+            //Dibi::test($sql);
+            $result = \dibi::query($sql); 
+            return $result;           
+        }
     
-    protected function afterDelete($id): void
-    {            
-    }
 }
