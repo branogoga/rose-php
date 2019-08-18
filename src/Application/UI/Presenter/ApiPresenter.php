@@ -15,9 +15,17 @@ abstract class ApiPresenter extends Presenter
         return $this->getResource();
     }
 
+    protected function getActionListPermission(): string
+    {
+        return "list";
+    }
+
     public function actionList(): void
     {
-        if(!$this->user->isAllowed($this->getActionListResource(), "list"))
+        if(!$this->user->isAllowed(
+            $this->getActionListResource(), 
+            $this->getActionListPermission()
+            ))
         {
             throw new \Nette\Application\ForbiddenRequestException();
         }
@@ -38,6 +46,11 @@ abstract class ApiPresenter extends Presenter
     protected function getActionShowResource(int $id)
     {
         return $this->getResource();
+    }
+
+    protected function getActionShowPermission(): string
+    {
+        return "show";
     }
 
     public function actionShow( int $id ): void
@@ -85,9 +98,17 @@ abstract class ApiPresenter extends Presenter
         return $this->getResource();
     }
 
+    protected function getActionAddPermission(): string
+    {
+        return "add";
+    }
+
     public function actionAdd(): void
     {
-        if(!$this->user->isAllowed($this->getActionAddResource(), "add"))
+        if(!$this->user->isAllowed(
+            $this->getActionAddResource(),
+            $this->getActionAddPermission()
+            ))
         {
             throw new \Nette\Application\ForbiddenRequestException();
         }
@@ -157,9 +178,17 @@ abstract class ApiPresenter extends Presenter
         return $this->getResource();
     }
 
+    protected function getActionEditPermission(): string
+    {
+        return "edit";
+    }
+
     public function actionEdit( int $id ): void
     {
-        if(!$this->user->isAllowed($this->getActionEditResource($id), "edit"))
+        if(!$this->user->isAllowed(
+            $this->getActionEditResource($id), 
+            $this->getActionEditPermission()
+            ))
         {
             throw new \Nette\Application\ForbiddenRequestException();
         }
@@ -228,9 +257,17 @@ abstract class ApiPresenter extends Presenter
         return $this->getResource();
     }
 
+    protected function getActionDeletePermission(): string
+    {
+        return "delete";
+    }
+
     public function actionDelete( int $id ): void
     {
-        if(!$this->user->isAllowed($this->getActionDeleteResource($id), "delete"))
+        if(!$this->user->isAllowed(
+            $this->getActionDeleteResource($id),
+            $this->getActionDeletePermission()
+            ))
         {
             throw new \Nette\Application\ForbiddenRequestException();
         }
