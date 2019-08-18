@@ -104,8 +104,13 @@ abstract class Model
     //            ->fetchSingle();		
 	//}
     
-	public function	isIdValid( int $id ): bool
-	{            
+	public function	isIdValid( ?int $id ): bool
+	{     
+        if($id === null)
+        {
+            return false;
+        }
+        
         if(!is_numeric($id))
         {
             return false;
@@ -181,7 +186,7 @@ abstract class Model
 		return \dibi::getConnection()
             ->select($select)
             ->from($from)
-            ->where(/*$this->getTableAlias().".".*/$this->getPrimaryKeyName().'=%i', $id);
+            ->where($this->getTableAlias().".".$this->getPrimaryKeyName().'=%i', $id);
 	}
 
     public function findLast( bool $joinTables = true, array $joinedTables = [] )
