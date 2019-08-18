@@ -426,7 +426,9 @@ abstract class Model
         private function getFulltextIndexColumnsString( array $columns ): string
         {
             if(count($columns) == 0)
-                throw \Rose\Exceptions\InvalidArgumentException();
+            {
+                throw \Exception();
+            }
 
             $result = $columns[0];
             
