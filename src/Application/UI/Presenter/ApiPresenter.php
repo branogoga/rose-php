@@ -72,7 +72,7 @@ abstract class ApiPresenter extends Presenter
 
         if(!$body)
         {
-            throw new \Exception("Action 'add' required non-empty body.");
+            throw new \Nette\Application\BadRequestException("Action 'add' required non-empty body.");
         }
         
         $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
@@ -136,7 +136,7 @@ abstract class ApiPresenter extends Presenter
 
         if(!$body)
         {
-            throw new \Exception("Action 'edit' required non-empty body.");
+            throw new \Nette\Application\BadRequestException("Action 'edit' required non-empty body.");
         }
         
         $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
