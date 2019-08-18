@@ -1,8 +1,8 @@
 {
     "name": "branogoga/rose-php",
     "description": "Rose PHP Library",
-    "version": "0.2.3",
     "type": "library",
+    "license": "MIT",
     "authors": [{
         "name": "Brano Goga",
         "email": "brano.goga@centrum.sk"
