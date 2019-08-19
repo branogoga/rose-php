@@ -20,7 +20,7 @@ abstract class ApiPresenter extends Presenter
         return "list";
     }
 
-    public function actionList(): void
+    public function actionList(int $limit = 100, int $page = 0): void
     {
         if(!$this->user->isAllowed(
             $this->getActionListResource(), 
@@ -31,10 +31,10 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
-    public function renderList(): void
+    public function renderList(int $limit = 100, int $page = 0): void
     {
         $model=  $this->getModel();
-        $list = $model->getAll()->fetchAll();
+        $list = $model->findAll($page, $limit)->fetchAll();
 
         $this->sendResponse(
             new \Nette\Application\Responses\JsonResponse(
