@@ -304,12 +304,7 @@ abstract class Model
             ->insert($this->getTableName(), $data)
             ->execute();
         
-        if(!is_int($result))
-        {
-            throw new \Exception("SQL insert should return ID of new item.");
-        }
-                
-        return $result;
+        return \dibi::getInsertId();
     }
     
     public function insert(array &$data): int
