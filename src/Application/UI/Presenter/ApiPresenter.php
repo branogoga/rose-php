@@ -82,7 +82,7 @@ abstract class ApiPresenter extends Presenter
         $errors = $this->validate($data);
         if(count($errors) > 0)
         {
-            \Tracy\Debugger::barDump($errors);
+            \Tracy\Debugger::barDump($errors, "Validation errors");
 
             $response = new \Nette\Application\Responses\JsonResponse($errors);
             //$this->getHttpResponse()->setCode(\Nette\Http\IResponse::S400_BAD_REQUEST);
@@ -125,7 +125,7 @@ abstract class ApiPresenter extends Presenter
         }
         
         $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
-        \Tracy\Debugger::barDump($json);
+        \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
 
         $this->beforeAdd($json);        
@@ -160,11 +160,11 @@ abstract class ApiPresenter extends Presenter
             }
         }
 
-        \Tracy\Debugger::barDump($item);
+        \Tracy\Debugger::barDump($item, "Item immediately before insert:");
 
         $model->insert($item);
 
-        \Tracy\Debugger::barDump($item);
+        \Tracy\Debugger::barDump($item, "Item immediately after insert:");
 
         return $item;
     }
@@ -206,7 +206,7 @@ abstract class ApiPresenter extends Presenter
         }
         
         $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
-        \Tracy\Debugger::barDump($json);
+        \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
         
         $this->beforeEdit($id, $json);
@@ -239,11 +239,11 @@ abstract class ApiPresenter extends Presenter
             }
         }
 
-        \Tracy\Debugger::barDump($item);
+        \Tracy\Debugger::barDump($item, "beforeUpdate");
 
         $model->update($id, $item);
 
-        \Tracy\Debugger::barDump($item);
+        \Tracy\Debugger::barDump($item, "afterUpdate");
 
         return $item;
     }
@@ -274,7 +274,7 @@ abstract class ApiPresenter extends Presenter
 
         $model = $this->getModel();
         $item = $this->getEntityAsArray($id);
-        \Tracy\Debugger::barDump($item);
+        \Tracy\Debugger::barDump($item, "beforeDelete");
         $this->beforeDelete($id, $item);
         $model->delete($id);
         $this->afterDelete($id, $item);
