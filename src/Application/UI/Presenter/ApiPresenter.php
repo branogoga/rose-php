@@ -301,7 +301,7 @@ abstract class ApiPresenter extends Presenter
     protected function getEntityAsArray(int $id): array
     {
         $model=  $this->getModel();
-        $row = $model->find($id)->fetch();
+        $row = $model->find($id, false)->fetch();
 
         if(!$row)
         {

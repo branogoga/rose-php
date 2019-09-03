@@ -258,12 +258,12 @@ abstract class Model
             ->where($this->getPrimaryKeyName().'=%i', $id)			
             ->execute();
 
-        if(!is_int($result))
+        if(is_int($result))
         {
-            throw new \Exception("SQL update should return number of affected rows.");
+            return $result;
         }
                 
-        return $result;
+        return \dibi::getAffectedRows();
     }
                
     protected function afterUpdate( int $id, array $data ): void
