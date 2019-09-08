@@ -23,7 +23,7 @@ class MockApiPresenter extends \Rose\Application\UI\Presenter\ApiPresenter
 
 final class ApiPresenterTest extends PHPUnit\Framework\TestCase
 {
-	public function		testFoo()
+	public function		testFoo(): void
 	{
         $factory = new \Nette\Application\PresenterFactory();
         //$presenter = $factory->createPresenter("MockApi");
@@ -51,7 +51,7 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
             $templateFactory
         );
 
-        $this->assertNotNull($presenter);
+        self::assertNotNull($presenter);
 
         $request = new \Nette\Application\Request("list", \Nette\Http\IRequest::GET);
         $response = $presenter->run($request);

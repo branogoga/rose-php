@@ -28,19 +28,19 @@ abstract class Model
 		return	" ".$this->getTableName()." AS ".$this->getTableAlias()." ";
 	}
 
-	protected  function	getSelectClause()
+	protected  function	getSelectClause(): string
 	{
             return "*"; 
 	}
         
 	/// Vrati SELECT klazulu pre dotaz na vsetky zaujimave tabulky
 	/// Prepisanim sa daju riesit konflikty nazvov stlpcov
-	protected  function	getAllTablesJoinSelectClause( array $joinedTables = [] )
+	protected  function	getAllTablesJoinSelectClause( array $joinedTables = [] ): string
 	{
             return $this->getSelectClause();
 	}
 
-    protected function      getFromClause()
+    protected function      getFromClause(): string
     {
         return $this->getSelectClause();
     }
@@ -73,7 +73,7 @@ abstract class Model
 		$sql = "SELECT ".$select."
 				FROM ".$from;
         
-        if($this->getDeletedColumnName())
+        if($this->getDeletedColumnName() !== null && strlen($this->getDeletedColumnName()) > 0)
         {
             $sql .= " WHERE ".$this->getDeletedColumnName()." IS NULL";
         }
@@ -107,11 +107,6 @@ abstract class Model
 	public function	isIdValid( ?int $id ): bool
 	{     
         if($id === null)
-        {
-            return false;
-        }
-        
-        if(!is_numeric($id))
         {
             return false;
         }
@@ -157,7 +152,7 @@ abstract class Model
             ->from($this->getAllTablesJoinFromClause($joinedTables))
             ;
         
-        if($this->getDeletedColumnName())
+        if($this->getDeletedColumnName() !== null && strlen($this->getDeletedColumnName()) > 0)
         {
             $query->where($this->getDeletedColumnName()." IS NULL");
         }
@@ -189,7 +184,7 @@ abstract class Model
             ->where($this->getTableAlias().".".$this->getPrimaryKeyName().'=%i', $id);
 	}
 
-    public function findLast( bool $joinTables = true, array $joinedTables = [] )
+    public function findLast( bool $joinTables = true, array $joinedTables = [] ): \Dibi\Fluent
     {
         $select = "*";
         $from	= $this->getTable();
@@ -236,7 +231,7 @@ abstract class Model
         else
         {
             $id = $this->insert($data);
-            if(is_int($id) && $id > 0)
+            if($id > 0)
             {
                 return true;
             }
@@ -338,7 +333,7 @@ abstract class Model
     {
         $this->beforeDelete($id);
 
-        if($this->getDeletedColumnName()) 
+        if($this->getDeletedColumnName() !== null && strlen($this->getDeletedColumnName()) > 0)
         {
             $result = $this->markRowAsDeleted($id);
         }
@@ -351,15 +346,10 @@ abstract class Model
 
         $this->afterDelete($id);
 
-        if(!is_int($result))
-        {
-            throw new \Exception("SQL delete should return number of affected rows.");
-        }
-                
         return $result;
     }
 
-    public function deleteLast()
+    public function deleteLast(): void
     {
         $data = $this->findLast(false)->fetch();
         
@@ -407,7 +397,7 @@ abstract class Model
         return $result;
     }    
     
-        public  function hasFulltextIndex()
+        public  function hasFulltextIndex(): bool
         {
             return false;
         }
@@ -504,7 +494,12 @@ abstract class Model
             return $result;
         }
         
-        public function queryRegExp( string $query, string $column, bool $joinTables = true, array $joinedTables = [] )
+        public function queryRegExp( 
+            string $query, 
+            string $column, 
+            bool $joinTables = true, 
+            array $joinedTables = [] 
+            ) : string
         {
             $regExp = \Rose\Utils\Strings\Charset::makePunctuationInsensitiveSearchRegularExpression($query);
             //Tracy\Debugger::dump($regExp);
@@ -527,7 +522,12 @@ abstract class Model
             return $sql;
         }
         
-        public function searchRegExp( string $query, string $column, $joinTables = true, array $joinedTables = [] )
+        public function searchRegExp( 
+            string  $query, 
+            string  $column, 
+            bool    $joinTables = true, 
+            array   $joinedTables = []
+            ): \Dibi\Result
         {
             $sql = $this->queryRegExp( $query, $column, $joinTables, $joinedTables );
             //dibi::test($sql,$regExp);

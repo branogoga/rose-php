@@ -8,20 +8,25 @@ final class Color
 {
     static public function calculateGradient(string $startHexRGB, string $endHxRGB, int $steps): array
     {
+        $start = array();
         $start['r'] = hexdec(substr($startHexRGB, 0, 2));
         $start['g'] = hexdec(substr($startHexRGB, 2, 2));
         $start['b'] = hexdec(substr($startHexRGB, 4, 2));
 
+        $end = array();
         $end['r'] = hexdec(substr($endHxRGB, 0, 2));
         $end['g'] = hexdec(substr($endHxRGB, 2, 2));
         $end['b'] = hexdec(substr($endHxRGB, 4, 2));
 
+        $step =  array();
         $step['r'] = ($start['r'] - $end['r']) / ($steps - 1);
         $step['g'] = ($start['g'] - $end['g']) / ($steps - 1);
         $step['b'] = ($start['b'] - $end['b']) / ($steps - 1);
 
         $gradient = array();
 
+        $rgb = array();
+        $hex = array();
         for($i = 0; $i < $steps; $i++)
         {
 

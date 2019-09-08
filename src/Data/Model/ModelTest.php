@@ -7,7 +7,7 @@ final class ModelTest extends PHPUnit\Framework\TestCase
      public function testGetTable(): void
     {
         $model = new TestModel();
-        $this->assertEquals(
+        self::assertEquals(
             " table-name AS tmp ",
             $model->getTable()
         );

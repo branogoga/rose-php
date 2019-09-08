@@ -6,7 +6,7 @@ final class SayHelloTest extends PHPUnit\Framework\TestCase
 {
     public function testSayHello(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             "Hello World, Composer!",
             \Rose\HelloWorld\SayHello::world()
         );

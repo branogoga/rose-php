@@ -27,6 +27,7 @@ final class Charset
         
         $text = str_replace(array("\\"), array(""),$text);  
         
+        $arr_conv = array();
         $arr_conv['a'] = '[aáäAÁÄ]';
         $arr_conv['c'] = '[cčCČ]';
         $arr_conv['d'] = '[dďDĎ]';

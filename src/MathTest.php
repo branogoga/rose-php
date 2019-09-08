@@ -5,7 +5,7 @@ final class MathTest extends PHPUnit\Framework\TestCase
 {
     public function testAdd(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             3,
             Rose\Math::add(1, 2)
         );

@@ -10,7 +10,7 @@ abstract class ApiPresenter extends Presenter
     protected abstract function validate(array $data): array;
     protected abstract function getResource(): string;
 
-    protected function getActionListResource()
+    protected function getActionListResource(): string
     {
         return $this->getResource();
     }
@@ -43,7 +43,7 @@ abstract class ApiPresenter extends Presenter
         );                
     }
 
-    protected function getActionShowResource(int $id)
+    protected function getActionShowResource(int $id): string
     {
         return $this->getResource();
     }
@@ -93,7 +93,7 @@ abstract class ApiPresenter extends Presenter
         }        
     }
 
-    protected function getActionAddResource()
+    protected function getActionAddResource(): string
     {
         return $this->getResource();
     }
@@ -119,7 +119,7 @@ abstract class ApiPresenter extends Presenter
         $request = $this->getHttpRequest();
         $body = $request->getRawBody();
 
-        if(!$body)
+        if(!is_string($body) || strlen($body) == 0)
         {
             throw new \Nette\Application\BadRequestException("Action 'add' required non-empty body.");
         }
@@ -173,7 +173,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
 
-    protected function getActionEditResource(int $id)
+    protected function getActionEditResource(int $id): string
     {
         return $this->getResource();
     }
@@ -200,7 +200,7 @@ abstract class ApiPresenter extends Presenter
         $request = $this->getHttpRequest();
         $body = $request->getRawBody();        
 
-        if(!$body)
+        if(!is_string($body) || strlen($body) == 0)
         {
             throw new \Nette\Application\BadRequestException("Action 'edit' required non-empty body.");
         }
@@ -252,7 +252,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
     
-    protected function getActionDeleteResource(int $id)
+    protected function getActionDeleteResource(int $id): string
     {
         return $this->getResource();
     }
@@ -303,7 +303,7 @@ abstract class ApiPresenter extends Presenter
         $model=  $this->getModel();
         $row = $model->find($id, false)->fetch();
 
-        if(!$row)
+        if($row === null)
         {
             throw new \Exception("Unable to fetch data of requested item.");
         }
@@ -312,7 +312,7 @@ abstract class ApiPresenter extends Presenter
         {
             $item = $row;
         } 
-        else if ($row instanceof \Dibi\Row)
+        else // $row instanceof Dibi\Row
         {
             $item = $row->toArray();
         }

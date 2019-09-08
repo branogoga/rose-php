@@ -341,7 +341,7 @@ final class WordTest extends PHPUnit\Framework\TestCase
 
         $outputTextWord2010Starter = \Rose\Utils\Strings\Word::cleanUp($inputTextWord2010Starter);
 
-        $this->assertSame(
+        self::assertSame(
                 $expectedOutputWord2010Starter, $outputTextWord2010Starter
         );
     }
