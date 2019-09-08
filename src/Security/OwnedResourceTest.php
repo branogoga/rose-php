@@ -14,7 +14,7 @@ final class OwnedResourceTest extends PHPUnit\Framework\TestCase
         //     $resource->getUser()
         // );
 
-        $this->markTestIncomplete(
+        self::markTestIncomplete(
             'This test has not been implemented yet.'
           );
     }

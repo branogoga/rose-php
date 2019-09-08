@@ -56,6 +56,9 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
         $request = new \Nette\Application\Request("list", \Nette\Http\IRequest::GET);
         $response = $presenter->run($request);
 
-        \Tracy\Debugger::dump($response);
+        //\Tracy\Debugger::dump($response);
+        //self::assertEquals(301, $response->httpCode);
+
+        self::markTestIncomplete("Not implemented.");
 	}        
 }
