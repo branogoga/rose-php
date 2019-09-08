@@ -8,9 +8,9 @@ abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;
     protected abstract function validate(array $data): array;
-    protected abstract function getResource(): string;
+    protected abstract function getResource(): \Nette\Security\IResource;
 
-    protected function getActionListResource(): string
+    protected function getActionListResource(): \Nette\Security\IResource
     {
         return $this->getResource();
     }
@@ -43,7 +43,7 @@ abstract class ApiPresenter extends Presenter
         );                
     }
 
-    protected function getActionShowResource(int $id): string
+    protected function getActionShowResource(int $id): \Nette\Security\IResource
     {
         return $this->getResource();
     }
@@ -93,7 +93,7 @@ abstract class ApiPresenter extends Presenter
         }        
     }
 
-    protected function getActionAddResource(): string
+    protected function getActionAddResource(): \Nette\Security\IResource
     {
         return $this->getResource();
     }
@@ -173,7 +173,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
 
-    protected function getActionEditResource(int $id): string
+    protected function getActionEditResource(int $id): \Nette\Security\IResource
     {
         return $this->getResource();
     }
@@ -252,7 +252,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
     
-    protected function getActionDeleteResource(int $id): string
+    protected function getActionDeleteResource(int $id): \Nette\Security\IResource
     {
         return $this->getResource();
     }
