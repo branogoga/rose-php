@@ -15,9 +15,9 @@ class MockApiPresenter extends \Rose\Application\UI\Presenter\ApiPresenter
         return $errors;
     }
 
-    protected function getResource(): string
+    protected function getResource(): \Nette\Security\IResource
     {
-        return "mock-api";
+        return new \Rose\Security\Resource("mock-api");
     }
 }
 
