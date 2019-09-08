@@ -6,12 +6,10 @@ final class ResourceTest extends PHPUnit\Framework\TestCase
 {
     public function testGetResourceId(): void
     {
-        // $resource = new \Rose\Security\Resource("#testID");
-        // self::assertEquals(
-        //     "#testID",
-        //     $resource->getResourceId()
-        // );
-
-        self::markTestIncomplete("Failed: Class 'Rose\Security\Resource' not found.");
+        $resource = new \Rose\Security\Resource("#testID");
+        self::assertEquals(
+            "#testID",
+            $resource->getResourceId()
+        );
     }
 }
