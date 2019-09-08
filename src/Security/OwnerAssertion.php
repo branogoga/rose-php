@@ -1,6 +1,8 @@
 <?php
 
-class	Owner_Assertion
+namespace Rose\Security;
+
+class	OwnerAssertion
 {
     public function assert(
         \Nette\Security\Permission $acl,

@@ -1,5 +1,7 @@
 <?php
 
+namespace Rose\Security;
+
 interface OwnedResourceInterface extends \Nette\Security\IResource
 {
     public function getUser(): \Nette\Security\User; 
