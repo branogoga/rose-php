@@ -265,8 +265,18 @@ abstract class Model
     {            
     }
 
-    public function update(int $id, array $data): int
+    public function update(int $id, $data): int
 	{
+        if($data instanceof \Nette\Utils\ArrayHash)
+        {
+            $data = \Rose\Utils\Arrays::toArray($data);
+        }
+
+        if(!is_array($data))
+        {
+            throw new \InvalidArgumentException("Data must be array.");
+        }
+
 		if(array_key_exists($this->getPrimaryKeyName(), $data))
 		{
 			unset( $data[$this->getPrimaryKeyName()] );
@@ -302,8 +312,20 @@ abstract class Model
         return \dibi::getInsertId();
     }
     
-    public function insert(array &$data): int
+    public function insert(&$data): int
     {
+        $isConverted = false;
+        if($data instanceof \Nette\Utils\ArrayHash)
+        {
+            $data = \Rose\Utils\Arrays::toArray($data);
+            $isConverted = true;
+        }
+
+        if(!is_array($data))
+        {
+            throw new \InvalidArgumentException("Data must be array.");
+        }
+
         unset( $data[$this->getPrimaryKeyName()] );
 
         $this->beforeInsert( $data );
@@ -317,6 +339,11 @@ abstract class Model
         //dibi::test( \dibi::$sql );
 
         $this->afterInsert( $id, $data );
+
+        if($isConverted)
+        {
+            $data = \Nette\Utils\ArrayHash::from($data);
+        }
 
         return $result;
     }
