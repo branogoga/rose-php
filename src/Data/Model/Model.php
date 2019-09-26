@@ -216,11 +216,17 @@ abstract class Model
 
     public function save( array &$data ): bool
     {
+        $id = null;
         if(array_key_exists($this->getPrimaryKeyName(), $data) && 
             $this->isIdValid(intval($data[$this->getPrimaryKeyName()]))
             )
         {
-            $numberOfAffectedRows = $this->update($data[$this->getPrimaryKeyName()], $data);
+            $id = intval($data[$this->getPrimaryKeyName()]);
+        }
+
+        if($id)
+        {
+            $numberOfAffectedRows = $this->update($id, $data);
             if($numberOfAffectedRows > 0)
             {
                 return true;
