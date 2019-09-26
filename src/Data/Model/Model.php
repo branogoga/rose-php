@@ -104,7 +104,7 @@ abstract class Model
     //            ->fetchSingle();		
 	//}
     
-	public function	isIdValid( ?string $id ): bool
+	public function	isIdValid( ?int $id ): bool
 	{     
         if($id === null)
         {
@@ -216,7 +216,9 @@ abstract class Model
 
     public function save( array &$data ): bool
     {
-        if(array_key_exists($this->getPrimaryKeyName(), $data) && $this->isIdValid($data[$this->getPrimaryKeyName()]))
+        if(array_key_exists($this->getPrimaryKeyName(), $data) && 
+            $this->isIdValid(intval($data[$this->getPrimaryKeyName()]))
+            )
         {
             $numberOfAffectedRows = $this->update($data[$this->getPrimaryKeyName()], $data);
             if($numberOfAffectedRows > 0)
