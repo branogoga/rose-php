@@ -104,7 +104,7 @@ abstract class Model
     //            ->fetchSingle();		
 	//}
     
-	public function	isIdValid( ?int $id ): bool
+	public function	isIdValid( ?string $id ): bool
 	{     
         if($id === null)
         {
