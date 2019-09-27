@@ -376,7 +376,7 @@ abstract class Model
             ->where($this->getPrimaryKeyName() . '=%i', $id)
             ->execute();
 
-        assert($result instanceof \Dibi\Drivers\NoDataResult);
+        assert($result instanceof \Dibi\Result);
         $affectedRows = $result->getRowCount();
         if(!is_int($affectedRows))
         {
