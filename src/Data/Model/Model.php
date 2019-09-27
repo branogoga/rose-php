@@ -224,7 +224,7 @@ abstract class Model
             $id = intval($data[$this->getPrimaryKeyName()]);
         }
 
-        if($id)
+        if($id !== null)
         {
             $numberOfAffectedRows = $this->update($id, $data);
             if($numberOfAffectedRows > 0)
