@@ -376,12 +376,14 @@ abstract class Model
             ->where($this->getPrimaryKeyName() . '=%i', $id)
             ->execute();
 
-        if(!is_int($result))
+        assert($result instanceof \Dibi\Drivers\NoDataResult);
+        $affectedRows = $result->getRowCount();
+        if(!is_int($affectedRows))
         {
             throw new \Exception("SQL delete should return number of affected rows.");
         }
                 
-        return $result;
+        return $affectedRows;
     }
 
     private function markRowAsDeleted(int $id): int {
