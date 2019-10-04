@@ -376,11 +376,9 @@ abstract class Model
             ->execute();
 
         assert($result instanceof \Dibi\Result);
+
+        //* @var int $affectedRows */
         $affectedRows = $result->getRowCount();
-        if(!is_int($affectedRows))
-        {
-            throw new \Exception("SQL delete should return number of affected rows.");
-        }
                 
         return $affectedRows;
     }
@@ -399,14 +397,12 @@ abstract class Model
             ->execute();
 
         assert($result instanceof \Dibi\Result);
+
+        //* @var int $affectedRows */
         $affectedRows = $result->getRowCount();
-        if(!is_int($affectedRows))
-        {
-            throw new \Exception("SQL delete should return number of affected rows.");
-        }
                 
         return $affectedRows;
-    }    
+    }
     
         public  function hasFulltextIndex(): bool
         {
