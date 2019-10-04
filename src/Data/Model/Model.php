@@ -216,9 +216,17 @@ abstract class Model
 
     public function save( array &$data ): bool
     {
-        if(array_key_exists($this->getPrimaryKeyName(), $data) && $this->isIdValid($data[$this->getPrimaryKeyName()]))
+        $id = null;
+        if(array_key_exists($this->getPrimaryKeyName(), $data) && 
+            $this->isIdValid(intval($data[$this->getPrimaryKeyName()]))
+            )
         {
-            $numberOfAffectedRows = $this->update($data[$this->getPrimaryKeyName()], $data);
+            $id = intval($data[$this->getPrimaryKeyName()]);
+        }
+
+        if($id !== null)
+        {
+            $numberOfAffectedRows = $this->update($id, $data);
             if($numberOfAffectedRows > 0)
             {
                 return true;
@@ -367,12 +375,14 @@ abstract class Model
             ->where($this->getPrimaryKeyName() . '=%i', $id)
             ->execute();
 
-        if(!is_int($result))
+        assert($result instanceof \Dibi\Result);
+        $affectedRows = $result->getRowCount();
+        if(!is_int($affectedRows))
         {
             throw new \Exception("SQL delete should return number of affected rows.");
         }
                 
-        return $result;
+        return $affectedRows;
     }
 
     private function markRowAsDeleted(int $id): int {
@@ -388,12 +398,14 @@ abstract class Model
             ->where($this->getPrimaryKeyName() . '=%i', $id)
             ->execute();
 
-        if(!is_int($result))
+        assert($result instanceof \Dibi\Result);
+        $affectedRows = $result->getRowCount();
+        if(!is_int($affectedRows))
         {
-            throw new \Exception("SQL update should return number of affected rows.");
+            throw new \Exception("SQL delete should return number of affected rows.");
         }
                 
-        return $result;
+        return $affectedRows;
     }    
     
         public  function hasFulltextIndex(): bool

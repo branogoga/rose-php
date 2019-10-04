@@ -6,7 +6,12 @@ namespace Rose\Utils\Strings;
 
 final class Word
 {
-    public static function cleanUp(string $text, bool $ignoreFont = true, bool $removeStyles = true, bool $keepStructure = true): string 
+    public static function cleanUp(
+		string $text, 
+		bool $ignoreFont = true, 
+		bool $removeStyles = true, 
+		bool $keepStructure = true
+		): string 
     {
 		$text = \Nette\Utils\Strings::replace($text, "/<o:p>\s*<\/o:p>/", '');
 		$text = \Nette\Utils\Strings::replace($text, "/<o:p>[\s\S]*?<\/o:p>/", '&nbsp;');
