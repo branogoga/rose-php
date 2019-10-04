@@ -309,16 +309,15 @@ abstract class Model
         $this->beforeInsert( $data );
 
         //Debug::fireLog(__METHOD__);	
-        $result = $this->doInsert($data);
+        $id = $this->doInsert($data);
         
-        $id = \dibi::getInsertId();
         $data[$this->getPrimaryKeyName()] = $id;
 
         //dibi::test( \dibi::$sql );
 
         $this->afterInsert( $id, $data );
 
-        return $result;
+        return $id;
     }
     
     protected function beforeDelete(int $id): void
