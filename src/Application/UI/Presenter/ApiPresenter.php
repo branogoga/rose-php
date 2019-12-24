@@ -35,12 +35,17 @@ abstract class ApiPresenter extends Presenter
     {
         $model=  $this->getModel();
         $list = $model->findAll($page, $limit)->fetchAll();
+        $this->afterList($list);
 
         $this->sendResponse(
             new \Nette\Application\Responses\JsonResponse(
                 $list
             )
         );                
+    }
+
+    protected function afterList(array &$list): void
+    {        
     }
 
     protected function getActionShowResource(int $id): \Nette\Security\IResource
