@@ -317,16 +317,15 @@ abstract class Model
         $this->beforeInsert( $data );
 
         //Debug::fireLog(__METHOD__);	
-        $result = $this->doInsert($data);
+        $id = $this->doInsert($data);
         
-        $id = \dibi::getInsertId();
         $data[$this->getPrimaryKeyName()] = $id;
 
         //dibi::test( \dibi::$sql );
 
         $this->afterInsert( $id, $data );
 
-        return $result;
+        return $id;
     }
     
     protected function beforeDelete(int $id): void
@@ -377,11 +376,9 @@ abstract class Model
             ->execute();
 
         assert($result instanceof \Dibi\Result);
+
+        //* @var int $affectedRows */
         $affectedRows = $result->getRowCount();
-        if(!is_int($affectedRows))
-        {
-            throw new \Exception("SQL delete should return number of affected rows.");
-        }
                 
         return $affectedRows;
     }
@@ -400,14 +397,12 @@ abstract class Model
             ->execute();
 
         assert($result instanceof \Dibi\Result);
+
+        //* @var int $affectedRows */
         $affectedRows = $result->getRowCount();
-        if(!is_int($affectedRows))
-        {
-            throw new \Exception("SQL delete should return number of affected rows.");
-        }
                 
         return $affectedRows;
-    }    
+    }
     
         public  function hasFulltextIndex(): bool
         {
