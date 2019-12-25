@@ -34,7 +34,9 @@ abstract class ApiPresenter extends Presenter
     public function renderList(int $limit = 100, int $page = 0): void
     {
         $model=  $this->getModel();
-        $list = $model->findAll($page, $limit)->fetchAll();
+        $list = $model->findAll($page, $limit)
+            ->orderBy($model->getPrimaryKeyName(), "DESC")
+            ->fetchAll();
         $this->afterList($list);
 
         $this->sendResponse(
