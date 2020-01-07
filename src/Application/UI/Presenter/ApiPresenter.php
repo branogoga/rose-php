@@ -4,6 +4,84 @@ declare(strict_types=1);
 
 namespace Rose\Application\UI\Presenter;
 
+class OrderDirection
+{
+    const ASC = \dibi::ASC;
+    const DESC = \dibi::DESC;
+
+    static public function isOrderDirection(string $direction): bool
+    {
+        if(($direction !== OrderDirection::ASC) && ($direction !== OrderDirection::DESC))
+        {
+            return false;
+        }
+    
+        return true;
+    }    
+}
+
+class OrderItem
+{
+    function __construct(string $column, string $direction)
+    {
+        $this->column = $column;
+        $this->direction = $direction;
+    }
+
+    /** @var string */
+    public $column;
+
+    /** @var string */
+    public $direction;
+}
+
+class Order
+{
+    static public function parseOrder(string $json): array
+    {
+        $order = array();
+
+        $items = json_decode($json, true);
+
+        if(!is_array($items))
+        {
+            throw new \InvalidArgumentException("Order must be an JSON array.");
+        }
+
+        foreach($items as $item)
+        {
+            if(is_string($item))
+            {
+                $order[] = new OrderItem($item, OrderDirection::DESC);
+            }
+            else if(is_array($item))
+            {
+                $column = $item[0];
+                if(!is_string($column))
+                {
+                    throw new \InvalidArgumentException("First item of order item array must be a string.");
+                }
+
+                $direction = $item[1];
+                if(!is_string($direction))
+                {
+                    throw new \InvalidArgumentException("Second item of order item array must be a string.");
+                }
+
+                $direction = strtoupper($direction);
+                if((!OrderDirection::isOrderDirection($direction)))
+                {
+                    throw new \InvalidArgumentException("Order direction must be either 'ASC'or 'DESC'.");
+                }
+
+                $order[] = new OrderItem($column, $direction);
+            }
+        }
+
+        return $order;
+    }
+}
+
 abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;
@@ -20,7 +98,7 @@ abstract class ApiPresenter extends Presenter
         return "list";
     }
 
-    public function actionList(int $limit = 100, int $page = 0): void
+    public function actionList(string $order = null, int $limit = 100, int $page = 0): void
     {
         if(!$this->user->isAllowed(
             $this->getActionListResource(), 
@@ -31,12 +109,30 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
-    public function renderList(int $limit = 100, int $page = 0): void
+    public function renderList(string $order = null, int $limit = 100, int $page = 0): void
     {
-        $model=  $this->getModel();
-        $list = $model->findAll($page, $limit)
-            ->orderBy($model->getPrimaryKeyName(), "DESC")
-            ->fetchAll();
+        $model =  $this->getModel();
+        $query = $model->findAll($page, $limit);
+
+        if ($order !== null)
+        {
+            $orderItems = Order::parseOrder($order);
+            foreach($orderItems as $item)
+            {
+                if(!$item instanceof OrderItem)
+                {
+                    throw new \LogicException("Invalid order item.");
+                }
+
+                $query = $query->orderBy($item->column, $item->direction);
+            }
+        }
+        else
+        {
+            $query = $query->orderBy($model->getPrimaryKeyName(), "DESC");
+        }
+
+        $list = $query->fetchAll();
         $this->afterList($list);
 
         $this->sendResponse(
