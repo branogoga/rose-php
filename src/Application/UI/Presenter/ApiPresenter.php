@@ -4,6 +4,33 @@ declare(strict_types=1);
 
 namespace Rose\Application\UI\Presenter;
 
+abstract class Filter
+{
+    public function __construct(string $key)
+    {
+        $this->key = $key;
+    }
+
+    abstract public function isValid($value): bool;
+    abstract public function applyFilterToQuery(\Dibi\Fluent $query, string $key, $value): void;
+
+    private $key;
+}
+
+class IntegerIsEqualFilter extends Filter
+{
+    public function isValid($value): bool
+    {
+        return is_integer($value);
+    }
+
+    public function applyFilterToQuery(\Dibi\Fluent $query, string $key, $value): void
+    {
+        $query->where($key."=%i", (int)$value);
+    }
+
+}
+
 class OrderDirection
 {
     const ASC = \dibi::ASC;
@@ -109,10 +136,39 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
+    protected function getListFilter(): array 
+    {
+        $filters = [];
+        return $filters;
+    }
+
     public function renderList(string $order = null, int $limit = 100, int $page = 0): void
     {
         $model =  $this->getModel();
         $query = $model->findAll($page, $limit);
+
+        $request = $this->getHttpRequest();
+        $params = $request->getQuery();
+
+        $knownFilterParams = $this->getListFilter();
+        foreach($params as $key => $value)
+        {
+            if(array_key_exists($key, $knownFilterParams))
+            {
+                $filter = $knownFilterParams[$key];
+                if(!$filter instanceof Filter)
+                {
+                    throw new \InvalidArgumentException("Unable to filter the list: Item $key is not an instance of Filter.");
+                }
+
+                if(!$filter->isValid($value))
+                {
+                    throw new \InvalidArgumentException("Unable to filter the list: Invalid value '$value' in key '$key'.");
+                }
+
+                $filter->applyFilterToQuery($query, $key, $value);
+            }
+        }
 
         if ($order !== null)
         {
