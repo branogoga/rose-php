@@ -37,10 +37,11 @@ abstract class SingleValueFilter extends Filter
 
 class SingleValueIntegerFilter extends SingleValueFilter
 {
-    public function __construct(string $key, string $operator)
+    public function __construct(string $key, string $column, string $operator)
     {
         parent::__construct($key);
         $this->operator = $operator;
+        $this->column = $column;
     }
 
     public function isValid(array $params): bool
@@ -59,26 +60,27 @@ class SingleValueIntegerFilter extends SingleValueFilter
         if($this->isValid($params))
         {
             $value = $params[$this->key];
-            $query->where($this->key.$this->operator."%i", (int)$value);
+            $query->where($this->column.$this->operator."%i", (int)$value);
         }
     }
 
+    private $column;
     private $operator;
 }
 class IntegerIsEqualFilter extends SingleValueIntegerFilter
 {
     public function __construct(string $key)
     {
-        parent::__construct($key, "=");
+        parent::__construct($key, $key, "=");
     }
 }
 
 class RangeFilter
 {
-    public function __construct(string $minKey, string $maxKey)
+    public function __construct(string $column, string $minValueKey, string $maxValueKey)
     {
-        $this->minFilter = new SingleValueIntegerFilter($minKey, ">=");
-        $this->maxFilter = new SingleValueIntegerFilter($maxKey, "<=");
+        $this->minFilter = new SingleValueIntegerFilter($minValueKey, $column, ">=");
+        $this->maxFilter = new SingleValueIntegerFilter($maxValueKey, $column, "<=");
     }
 
     public function isValid(array $params): bool
