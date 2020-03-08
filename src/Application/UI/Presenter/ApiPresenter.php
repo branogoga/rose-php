@@ -56,13 +56,11 @@ class SingleValueIntegerFilter extends SingleValueFilter
 
     public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void
     {
-        if(!$this->isValid($params))
+        if($this->isValid($params))
         {
-            throw new \InvalidArgumentException("Invalid integer filter key: " + $this->key);
+            $value = $params[$this->key];
+            $query->where($this->key.$this->operator."%i", (int)$value);
         }
-
-        $value = $params[$this->key];
-        $query->where($this->key.$this->operator."%i", (int)$value);
     }
 
     private $operator;
