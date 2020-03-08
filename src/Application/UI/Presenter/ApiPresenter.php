@@ -226,12 +226,10 @@ abstract class ApiPresenter extends Presenter
                 throw new \InvalidArgumentException("Unable to filter the list: Item is not an instance of Filter.");
             }
 
-            if(!$filter->isValid($params))
+            if($filter->isValid($params))
             {
-                throw new \InvalidArgumentException("Unable to filter the list: Value passed to the filter is invalid.");
+                $filter->applyFilterToQuery($query, $params);
             }
-
-            $filter->applyFilterToQuery($query, $params);
         }
 
         if ($order !== null)
