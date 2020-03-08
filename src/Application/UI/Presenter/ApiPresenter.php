@@ -86,7 +86,7 @@ class IntegerIsEqualFilter extends SingleValueIntegerFilter
     }
 }
 
-class RangeFilter
+class RangeFilter implements Filter
 {
     private $column;
     private $minKey;
