@@ -36,7 +36,7 @@ abstract class SingleValueFilter extends Filter
     protected $key = null;
 }
 
-class SingleValueIntegerFilter extends SingleValueFilter
+abstract class SingleValueIntegerFilter extends SingleValueFilter
 {
     public function __construct(string $key, string $column, string $operator)
     {
