@@ -6,6 +6,7 @@ namespace Rose\Application\UI\Presenter;
 
 abstract class Filter
 {
+    abstract public function getName(): string;
     abstract public function isValid(array $params): bool;
     abstract public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void;
 }
@@ -73,14 +74,31 @@ class IntegerIsEqualFilter extends SingleValueIntegerFilter
     {
         parent::__construct($key, $key, "=");
     }
+
+    public function getName(): string
+    {
+        return "IntegerIsEqualFilter-".$this->key;
+    }
 }
 
 class RangeFilter
 {
+    private $column;
+    private $minKey;
+    private $maxKey;
+
     public function __construct(string $column, string $minValueKey, string $maxValueKey)
     {
+        $this->column = $column;
+        $this->minKey = $minValueKey;
+        $this->maxKey = $maxValueKey;
         $this->minFilter = new SingleValueIntegerFilter($minValueKey, $column, ">=");
         $this->maxFilter = new SingleValueIntegerFilter($maxValueKey, $column, "<=");
+    }
+
+    public function getName(): string
+    {
+        return "RangeFilter-".$this->column."-".$this->minKey."-".$this->maxKey;
     }
 
     public function isValid(array $params): bool
@@ -223,7 +241,7 @@ abstract class ApiPresenter extends Presenter
         {
             if(!$filter instanceof Filter)
             {
-                throw new \InvalidArgumentException("Unable to filter the list: Item is not an instance of Filter.");
+                throw new \InvalidArgumentException("Unable to filter the list: Item '".$this->getName()."' is not an instance of Filter.");
             }
 
             if($filter->isValid($params))
