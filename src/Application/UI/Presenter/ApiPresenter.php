@@ -36,13 +36,18 @@ abstract class SingleValueFilter extends Filter
     protected $key = null;
 }
 
-abstract class SingleValueIntegerFilter extends SingleValueFilter
+class SingleValueIntegerFilter extends SingleValueFilter
 {
     public function __construct(string $key, string $column, string $operator)
     {
         parent::__construct($key);
         $this->operator = $operator;
         $this->column = $column;
+    }
+
+    public function getName(): string
+    {
+        return "SingleValueIntegerFilter-".$this->getKey()."-".$this->column."-".$this->operator;
     }
 
     public function isValid(array $params): bool
