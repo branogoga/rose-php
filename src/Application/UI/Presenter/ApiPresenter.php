@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Rose\Application\UI\Presenter;
 
-abstract class Filter
+interface Filter
 {
-    abstract public function getName(): string;
-    abstract public function isValid(array $params): bool;
-    abstract public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void;
+    public function getName(): string;
+    public function isValid(array $params): bool;
+    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void;
 }
 
-abstract class SingleValueFilter extends Filter
+abstract class SingleValueFilter implements Filter
 {
     public function __construct(string $key)
     {
