@@ -6,29 +6,97 @@ namespace Rose\Application\UI\Presenter;
 
 abstract class Filter
 {
-    public function __construct(string $key)
-    {
-        $this->key = $key;
-    }
-
-    abstract public function isValid($value): bool;
-    abstract public function applyFilterToQuery(\Dibi\Fluent $query, string $key, $value): void;
-
-    private $key;
+    abstract public function isValid(array $params): bool;
+    abstract public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void;
 }
 
-class IntegerIsEqualFilter extends Filter
+abstract class SingleValueFilter extends Filter
 {
-    public function isValid($value): bool
+    public function __construct(string $key)
     {
+        $this->key = $key;        
+    }
+
+    public function isValid(array $params): bool
+    {
+        if(!array_key_exists($this->key, $params))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    protected $key = null;
+}
+
+class SingleValueIntegerFilter extends SingleValueFilter
+{
+    public function __construct(string $key, string $operator)
+    {
+        parent::__construct($key);
+        $this->operator = $operator;
+    }
+
+    public function isValid(array $params): bool
+    {
+        if(!parent::isValid($params))
+        {
+            return false;
+        }
+
+        $value = $params[$this->key];
         return is_integer($value);
     }
 
-    public function applyFilterToQuery(\Dibi\Fluent $query, string $key, $value): void
+    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void
     {
-        $query->where($key."=%i", (int)$value);
+        if(!$this->isValid($params))
+        {
+            throw new \InvalidArgumentException("Invalid integer filter key: " + $this->key);
+        }
+
+        $value = $params[$this->key];
+        $query->where($this->key.$this->operator."%i", (int)$value);
     }
 
+    private $operator;
+}
+class IntegerIsEqualFilter extends SingleValueIntegerFilter
+{
+    public function __construct(string $key)
+    {
+        parent::__construct($key, "=");
+    }
+}
+
+class RangeFilter
+{
+    public function __construct(string $minKey, string $maxKey)
+    {
+        $this->minFilter = new SingleValueIntegerFilter($minKey, ">=");
+        $this->maxFilter = new SingleValueIntegerFilter($maxKey, "<=");
+    }
+
+    public function isValid(array $params): bool
+    {
+        return $this->minFilter->isValid($params)
+            && $this->maxFilter->isValid($params);
+    }
+
+    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void
+    {
+        $this->minFilter->applyFilterToQuery($query, $params);
+        $this->maxFilter->applyFilterToQuery($query, $params);
+    }
+
+    private $minFilter;
+    private $maxFilter;
 }
 
 class OrderDirection
@@ -136,7 +204,7 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
-    protected function getListFilter(): array 
+    protected function getListFilters(): array 
     {
         $filters = [];
         return $filters;
@@ -150,24 +218,20 @@ abstract class ApiPresenter extends Presenter
         $request = $this->getHttpRequest();
         $params = $request->getQuery();
 
-        $knownFilterParams = $this->getListFilter();
-        foreach($params as $key => $value)
+        $filters = $this->getListFilters();
+        foreach($filters as $filter)
         {
-            if(array_key_exists($key, $knownFilterParams))
+            if(!$filter instanceof Filter)
             {
-                $filter = $knownFilterParams[$key];
-                if(!$filter instanceof Filter)
-                {
-                    throw new \InvalidArgumentException("Unable to filter the list: Item $key is not an instance of Filter.");
-                }
-
-                if(!$filter->isValid($value))
-                {
-                    throw new \InvalidArgumentException("Unable to filter the list: Invalid value '$value' in key '$key'.");
-                }
-
-                $filter->applyFilterToQuery($query, $key, $value);
+                throw new \InvalidArgumentException("Unable to filter the list: Item is not an instance of Filter.");
             }
+
+            if(!$filter->isValid($params))
+            {
+                throw new \InvalidArgumentException("Unable to filter the list: Value passed to the filter is invalid.");
+            }
+
+            $filter->applyFilterToQuery($query, $params);
         }
 
         if ($order !== null)
