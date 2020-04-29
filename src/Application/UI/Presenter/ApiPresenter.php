@@ -4,124 +4,6 @@ declare(strict_types=1);
 
 namespace Rose\Application\UI\Presenter;
 
-interface Filter
-{
-    public function getName(): string;
-    public function isValid(array $params): bool;
-    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void;
-}
-
-abstract class SingleValueFilter implements Filter
-{
-    public function __construct(string $key)
-    {
-        $this->key = $key;        
-    }
-
-    public function isValid(array $params): bool
-    {
-        if(!array_key_exists($this->key, $params))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    protected $key = null;
-}
-
-class SingleValueIntegerFilter extends SingleValueFilter
-{
-    public function __construct(string $key, string $column, string $operator)
-    {
-        parent::__construct($key);
-        $this->operator = $operator;
-        $this->column = $column;
-    }
-
-    public function getName(): string
-    {
-        return "SingleValueIntegerFilter-".$this->getKey()."-".$this->column."-".$this->operator;
-    }
-
-    public function isValid(array $params): bool
-    {
-        if(!parent::isValid($params))
-        {
-            return false;
-        }
-
-        $value = $params[$this->key];
-        return is_integer($value);
-    }
-
-    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void
-    {
-        if($this->isValid($params))
-        {
-            $value = $params[$this->key];
-            $query->where($this->column.$this->operator."%i", (int)$value);
-        }
-    }
-
-    private $column;
-    private $operator;
-}
-class IntegerIsEqualFilter extends SingleValueIntegerFilter
-{
-    public function __construct(string $key)
-    {
-        parent::__construct($key, $key, "=");
-    }
-
-    public function getName(): string
-    {
-        return "IntegerIsEqualFilter-".$this->key;
-    }
-}
-
-class RangeFilter implements Filter
-{
-    private $column;
-    private $minKey;
-    private $maxKey;
-
-    public function __construct(string $column, string $minValueKey, string $maxValueKey)
-    {
-        $this->column = $column;
-        $this->minKey = $minValueKey;
-        $this->maxKey = $maxValueKey;
-        $this->minFilter = new SingleValueIntegerFilter($minValueKey, $column, ">=");
-        $this->maxFilter = new SingleValueIntegerFilter($maxValueKey, $column, "<=");
-    }
-
-    public function getName(): string
-    {
-        return "RangeFilter-".$this->column."-".$this->minKey."-".$this->maxKey;
-    }
-
-    public function isValid(array $params): bool
-    {
-        return $this->minFilter->isValid($params)
-            && $this->maxFilter->isValid($params);
-    }
-
-    public function applyFilterToQuery(\Dibi\Fluent $query, array $params): void
-    {
-        $this->minFilter->applyFilterToQuery($query, $params);
-        $this->maxFilter->applyFilterToQuery($query, $params);
-    }
-
-    private $minFilter;
-    private $maxFilter;
-}
-
 class OrderDirection
 {
     const ASC = \dibi::ASC;
@@ -244,7 +126,7 @@ abstract class ApiPresenter extends Presenter
         $filters = $this->getListFilters();
         foreach($filters as $filter)
         {
-            if(!$filter instanceof Filter)
+            if(!$filter instanceof Filters\Filter)
             {
                 throw new \InvalidArgumentException("Unable to filter the list: Item '".$this->getName()."' is not an instance of Filter.");
             }
