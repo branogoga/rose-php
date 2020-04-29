@@ -19,5 +19,6 @@ Output should be 'Hello World, Composer!'
 ```
 ## Test 
 ```sh
-TO DO:
+./phpstan.bat
+./phpunit.bat
 ```
