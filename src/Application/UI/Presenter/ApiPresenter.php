@@ -82,9 +82,13 @@ class Order
     }
 }
 
+class CountResponse
+{
+    public int    $count;
+}
+
 class ListResponse
 {
-    public int      $count;
     public array    $items;
 }
 
@@ -93,6 +97,58 @@ abstract class ApiPresenter extends Presenter
     protected abstract function getModel(): \Rose\Data\Model\Model;
     protected abstract function validate(array $data): array;
     protected abstract function getResource(): \Nette\Security\IResource;
+
+    protected function getActionCountResource(): \Nette\Security\IResource
+    {
+        return $this->getResource();
+    }
+
+    protected function getActionCountPermission(): string
+    {
+        return "count";
+    }
+
+    public function actionCount(): void
+    {
+        if(!$this->user->isAllowed(
+            $this->getActionCountResource(), 
+            $this->getActionCountPermission()
+            ))
+        {
+            throw new \Nette\Application\ForbiddenRequestException();
+        }
+    }
+
+    public function renderCount(): void
+    {
+        $query = $this->getListQuery(0, 0);
+
+        $request = $this->getHttpRequest();
+        $params = $request->getQuery();
+
+        $filters = $this->getListFilters();
+        foreach($filters as $filter)
+        {
+            if(!$filter instanceof Filters\Filter)
+            {
+                throw new \InvalidArgumentException("Unable to filter the list: Item '".$this->getName()."' is not an instance of Filter.");
+            }
+
+            if($filter->isValid($params))
+            {
+                $filter->applyFilterToQuery($query, $params);
+            }
+        }
+
+        $response = new CountResponse();
+        $response->count = $query->count();
+
+        $this->sendResponse(
+            new \Nette\Application\Responses\JsonResponse(
+                $response
+            )
+        );                
+    }
 
     protected function getActionListResource(): \Nette\Security\IResource
     {
@@ -115,16 +171,9 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
-    protected function getListFilters(): array 
-    {
-        $filters = [];
-        return $filters;
-    }
-
     public function renderList(string $order = null, int $limit = 100, int $page = 0): void
     {
-        $model =  $this->getModel();
-        $query = $model->findAll($page, $limit);
+        $query = $this->getListQuery($limit, $page);
 
         $request = $this->getHttpRequest();
         $params = $request->getQuery();
@@ -158,15 +207,15 @@ abstract class ApiPresenter extends Presenter
         }
         else
         {
+            $model =  $this->getModel();
             $query = $query->orderBy($model->getPrimaryKeyName(), "DESC");
         }
 
         $list = $query->fetchAll();
         $this->afterList($list);
-
+    
         $response = new ListResponse();
         $response->items = $list;
-        $response->count = $query->count();
 
         $this->sendResponse(
             new \Nette\Application\Responses\JsonResponse(
@@ -177,6 +226,37 @@ abstract class ApiPresenter extends Presenter
 
     protected function afterList(array &$list): void
     {        
+    }
+
+    protected function getListFilters(): array 
+    {
+        $filters = [];
+        return $filters;
+    }
+
+    protected function getListQuery(int $limit = 0, int $page = 0): \Dibi\Fluent 
+    {
+        $model =  $this->getModel();
+        $query = $model->findAll($page, $limit);
+
+        $request = $this->getHttpRequest();
+        $params = $request->getQuery();
+
+        $filters = $this->getListFilters();
+        foreach($filters as $filter)
+        {
+            if(!$filter instanceof Filters\Filter)
+            {
+                throw new \InvalidArgumentException("Unable to filter the list: Item '".$this->getName()."' is not an instance of Filter.");
+            }
+
+            if($filter->isValid($params))
+            {
+                $filter->applyFilterToQuery($query, $params);
+            }
+        }
+
+        return $query;
     }
 
     protected function getActionShowResource(int $id): \Nette\Security\IResource
