@@ -82,6 +82,12 @@ class Order
     }
 }
 
+class ListResponse
+{
+    public int      $count;
+    public array    $items;
+}
+
 abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;
@@ -158,9 +164,13 @@ abstract class ApiPresenter extends Presenter
         $list = $query->fetchAll();
         $this->afterList($list);
 
+        $response = new ListResponse();
+        $response->items = $list;
+        $response->count = $query->count();
+
         $this->sendResponse(
             new \Nette\Application\Responses\JsonResponse(
-                $list
+                $response
             )
         );                
     }
