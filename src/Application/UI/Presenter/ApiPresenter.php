@@ -105,7 +105,7 @@ abstract class ApiPresenter extends Presenter
 
     protected function getActionCountPermission(): string
     {
-        return "count";
+        return $this->getActionListPermission();
     }
 
     public function actionCount(): void
