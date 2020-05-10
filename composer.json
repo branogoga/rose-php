@@ -1,6 +1,5 @@
 {
     "name": "branogoga/rose-php",
-    "version": "0.2.12",
     "description": "Rose PHP Library",
     "type": "library",
     "license": "MIT",
