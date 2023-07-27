@@ -29,8 +29,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
+    - name: Allow composer plugins
       run: composer config --no-plugins allow-plugins.phpstan/extension-installer [true|false]
+
+    - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
     - name: PHP Static Analysis
