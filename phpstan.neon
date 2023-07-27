@@ -1,5 +1,5 @@
 parameters:
-	autoload_directories:
+	scanDirectories:
 		- src
-	autoload_files:
-		- vendor/autoload.php
+	scanFiles:
+		# - vendor/autoload.php
