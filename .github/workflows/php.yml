@@ -36,7 +36,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: PHP Static Analysis
-      run: vendor\bin\phpstan analyse src --level max
+      run: vendor/bin/phpstan analyse src --level max
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
