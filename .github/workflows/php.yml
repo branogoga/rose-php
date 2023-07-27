@@ -30,7 +30,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Allow composer plugins
-      run: composer config --no-plugins allow-plugins.phpstan/extension-installer [true|false]
+      run: composer config --no-plugins allow-plugins.phpstan/extension-installer true
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
