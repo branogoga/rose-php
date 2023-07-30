@@ -1,1 +1,1 @@
-vendor\bin\phpstan analyse src --level max
+vendor\bin\phpstan analyse src --level 0

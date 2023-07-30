@@ -2,7 +2,7 @@
 
 namespace Rose\Security;
 
-class   Resource implements \Nette\Security\IResource
+class   Resource implements \Nette\Security\Resource
 {
     public function __construct(string $resourceId)
     {

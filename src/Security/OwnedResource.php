@@ -2,7 +2,7 @@
 
 namespace Rose\Security;
 
-interface OwnedResourceInterface extends \Nette\Security\IResource
+interface OwnedResourceInterface extends \Nette\Security\Resource
 {
     public function getUser(): \Nette\Security\User; 
     public function getResourceId(): string;

@@ -17,7 +17,7 @@ class MockApiPresenter extends \Rose\Application\UI\Presenter\ApiPresenter
         return $errors;
     }
 
-    protected function getResource(): \Nette\Security\IResource
+    protected function getResource(): \Nette\Security\Resource
     {
         return new \Rose\Security\Resource("mock-api");
     }
@@ -35,7 +35,7 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
         /*\Nette\Application\IPresenterFactory*/ $presenterFactory = null;
         /*\Nette\Application\Router*/ $router = new \Nette\Application\Routers\SimpleRouter();
         /*\Nette\Application\IRequest*/ $httpRequest = new \Nette\Http\Request(
-            new \Nette\Http\UrlScript(), null, null, null, null, \Nette\Http\IRequest::GET
+            new \Nette\Http\UrlScript(), null, null, null, null, \Nette\Http\IRequest::Get
         );
         /*\Nette\Application\IResponse*/ $httpResponse = new \Nette\Http\Response();
         /*\Nette\Application\Session*/ $session = null;
@@ -55,7 +55,7 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
 
         self::assertNotNull($presenter);
 
-        $request = new \Nette\Application\Request("list", \Nette\Http\IRequest::GET);
+        $request = new \Nette\Application\Request("list", \Nette\Http\IRequest::Get);
         $response = $presenter->run($request);
 
         //\Tracy\Debugger::dump($response);

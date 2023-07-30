@@ -96,9 +96,9 @@ abstract class ApiPresenter extends Presenter
 {
     protected abstract function getModel(): \Rose\Data\Model\Model;
     protected abstract function validate(array $data): array;
-    protected abstract function getResource(): \Nette\Security\IResource;
+    protected abstract function getResource(): \Nette\Security\Resource;
 
-    protected function getActionCountResource(): \Nette\Security\IResource
+    protected function getActionCountResource(): \Nette\Security\Resource
     {
         return $this->getResource();
     }
@@ -150,7 +150,7 @@ abstract class ApiPresenter extends Presenter
         );                
     }
 
-    protected function getActionListResource(): \Nette\Security\IResource
+    protected function getActionListResource(): \Nette\Security\Resource
     {
         return $this->getResource();
     }
@@ -259,7 +259,7 @@ abstract class ApiPresenter extends Presenter
         return $query;
     }
 
-    protected function getActionShowResource(int $id): \Nette\Security\IResource
+    protected function getActionShowResource(int $id): \Nette\Security\Resource
     {
         return $this->getResource();
     }
@@ -309,7 +309,7 @@ abstract class ApiPresenter extends Presenter
         }        
     }
 
-    protected function getActionAddResource(): \Nette\Security\IResource
+    protected function getActionAddResource(): \Nette\Security\Resource
     {
         return $this->getResource();
     }
@@ -340,7 +340,7 @@ abstract class ApiPresenter extends Presenter
             throw new \Nette\Application\BadRequestException("Action 'add' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
+        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
 
@@ -389,7 +389,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
 
-    protected function getActionEditResource(int $id): \Nette\Security\IResource
+    protected function getActionEditResource(int $id): \Nette\Security\Resource
     {
         return $this->getResource();
     }
@@ -421,7 +421,7 @@ abstract class ApiPresenter extends Presenter
             throw new \Nette\Application\BadRequestException("Action 'edit' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
+        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
         
@@ -468,7 +468,7 @@ abstract class ApiPresenter extends Presenter
     {            
     }
     
-    protected function getActionDeleteResource(int $id): \Nette\Security\IResource
+    protected function getActionDeleteResource(int $id): \Nette\Security\Resource
     {
         return $this->getResource();
     }
