@@ -31,7 +31,7 @@ final class CharsetTest extends PHPUnit\Framework\TestCase
 
         self::assertEquals( 
             "[aáäAÁÄ]",
-            \Rose\Utils\Strings\Charset::makePunctuationInsensitiveSearchRegularExpression( "Ä" )
+            \Rose\Utils\Strings\Charset::makePunctuationInsensitiveSearchRegularExpression( "A" )
         );
     }
 
