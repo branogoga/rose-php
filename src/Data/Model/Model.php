@@ -11,7 +11,6 @@ abstract class Model
 {
      use \Nette\SmartObject;
     
-    /** @var string */
 	abstract protected 	function	getTableName(): string;
 	abstract public 	function	getPrimaryKeyName(): string;
     abstract public     function    getEmptyObject(): array;
@@ -412,13 +411,12 @@ abstract class Model
         public function  getFulltextIndexColumns(): array
         {
             throw new \Rose\Exceptions\NotImplementedException();
-            return [];            
         }
         
-        private function addTablePrefixToColumnName( string $column ): string
-        {
-            return $this->getTableName().".".$column;
-        }
+        // private function addTablePrefixToColumnName( string $column ): string
+        // {
+        //     return $this->getTableName().".".$column;
+        // }
         
         private function getFulltextIndexColumnsString( array $columns ): string
         {

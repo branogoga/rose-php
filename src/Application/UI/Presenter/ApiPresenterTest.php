@@ -80,7 +80,7 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
     {
         $items = json_decode('["column"]', true);
 
-        self::assertTrue(is_array($items));
+        //self::assertTrue(is_array($items));
         self::assertCount(1, $items);
 
         $order = \Rose\Application\UI\Presenter\Order::parseOrder('[]');

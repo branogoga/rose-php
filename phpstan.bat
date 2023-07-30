@@ -1,1 +1,1 @@
-vendor\bin\phpstan analyse src --level 0
+vendor\bin\phpstan analyse src --level 4
