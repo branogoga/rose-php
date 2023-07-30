@@ -40,4 +40,4 @@ jobs:
     # - name: Run test suite
     #   run: composer run-script test
     - name: PHP Static Analysis
-      run: vendor\bin\phpunit
+      run: vendor/bin/phpunit
