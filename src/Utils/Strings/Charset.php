@@ -6,8 +6,6 @@ namespace Rose\Utils\Strings;
 
 final class Charset
 {
-	const	CHARSET_NO_PUNCTUATION	=	"aaabccddeeefghiijklllmnnoooorrrssttuuuvxyyzzAAABCCDDEEEFGHIIJKLMNNOOOORRRSSTTUUUUVXYYZZ";
-	const	CHARSET_ISO8859_2 	    =	"aáäbcčdďeéěfghiíjklľĺmnňoóöôrŕřsštťuúüvxyýzžAÁÄBCČDĎEÉĚFGHIÍJKLMNŇOÓÔÖRŔŘSŠTŤUÚŮÜVXYÝZŽ";
 	
 	public static function removePunctuation(string $text): string
 	{

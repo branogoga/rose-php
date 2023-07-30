@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 final class CharsetTest extends PHPUnit\Framework\TestCase
 {
-	public function		testRemovePunctuation(): void
+    const	CHARSET_NO_PUNCTUATION	=	"aaaebccddeeefghiijklllmnnoooeorrrssttuuuevxyyzzAAAeBCCDDEEEFGHIIJKLMNNOOOOeRRRSSTTUUUUeVXYYZZ";
+    const	CHARSET_ISO8859_2 	    =	"aáäbcčdďeéěfghiíjklľĺmnňoóöôrŕřsštťuúüvxyýzžAÁÄBCČDĎEÉĚFGHIÍJKLMNŇOÓÔÖRŔŘSŠTŤUÚŮÜVXYÝZŽ";
+
+    public function		testRemovePunctuation(): void
 	{
-		self::assertEquals( 
-            \Rose\Utils\Strings\Charset::CHARSET_NO_PUNCTUATION,
-            \Rose\Utils\Strings\Charset::removePunctuation( \Rose\Utils\Strings\Charset::CHARSET_ISO8859_2 )
+        self::assertEquals( 
+            self::CHARSET_NO_PUNCTUATION,
+            \Rose\Utils\Strings\Charset::removePunctuation( self::CHARSET_ISO8859_2 )
         );
 
 		self::assertEquals( 
@@ -19,6 +22,36 @@ final class CharsetTest extends PHPUnit\Framework\TestCase
 		self::assertEquals( 
             "sturovo",
             \Rose\Utils\Strings\Charset::removePunctuation( "štúrovo" )
+        );
+
+		self::assertEquals( 
+            "ae",
+            \Rose\Utils\Strings\Charset::removePunctuation( "ä" )
+        );
+
+		self::assertEquals( 
+            "oe",
+            \Rose\Utils\Strings\Charset::removePunctuation( "ö" )
+        );
+
+		self::assertEquals( 
+            "ue",
+            \Rose\Utils\Strings\Charset::removePunctuation( "ü" )
+        );
+
+		self::assertEquals( 
+            "Ae",
+            \Rose\Utils\Strings\Charset::removePunctuation( "Ä" )
+        );
+
+		self::assertEquals( 
+            "Oe",
+            \Rose\Utils\Strings\Charset::removePunctuation( "Ö" )
+        );
+
+		self::assertEquals( 
+            "Ue",
+            \Rose\Utils\Strings\Charset::removePunctuation( "Ü" )
         );
 	}
         
