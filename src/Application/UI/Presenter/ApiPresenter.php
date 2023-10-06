@@ -340,7 +340,7 @@ abstract class ApiPresenter extends Presenter
             throw new \Nette\Application\BadRequestException("Action 'add' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
+        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
 
@@ -421,7 +421,7 @@ abstract class ApiPresenter extends Presenter
             throw new \Nette\Application\BadRequestException("Action 'edit' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
+        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
         
