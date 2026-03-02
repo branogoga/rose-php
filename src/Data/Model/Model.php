@@ -123,7 +123,7 @@ abstract class Model
 
         $count = $result->fetchSingle();
 		//Nette\Debug::dump($count);
-		return ($count == 1);				
+		return ($count === 1);
 	}
 
 	public function count(): int
@@ -260,11 +260,6 @@ abstract class Model
             ->where($this->getPrimaryKeyName().'=%i', $id)			
             ->execute();
 
-        if(is_int($result))
-        {
-            return $result;
-        }
-                
         return \dibi::getAffectedRows();
     }
                
@@ -420,7 +415,7 @@ abstract class Model
         
         private function getFulltextIndexColumnsString( array $columns ): string
         {
-            if(count($columns) == 0)
+            if(count($columns) === 0)
             {
                 throw new \Rose\Exceptions\InvalidArgumentException();
             }

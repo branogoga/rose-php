@@ -9,7 +9,7 @@ class DateTimeHelper
 	
     static public function formatDate(string $tdatum, string $nic): string
     {
-        if (substr($tdatum,0,2)=="00")
+        if (substr($tdatum,0,2)==="00")
         {
             return($nic);
         }
@@ -24,7 +24,7 @@ class DateTimeHelper
 
     static public function formatTime(string $tcas, string $nic): string
     {
-        if (substr($tcas,0,2)=="00")
+        if (substr($tcas,0,2)==="00")
         {
             return($nic);
         }
@@ -46,7 +46,7 @@ class DateTimeHelper
         list($tstdatum, $tstcas)=explode(" ",$den);
         list($tstrok, $tstmes,$tstden)=explode("-",$tstdatum);
 
-        if(($dnrok==$tstrok) && ($dnmes == $tstmes) && ($dnden == $tstden))
+        if(($dnrok===$tstrok) && ($dnmes === $tstmes) && ($dnden === $tstden))
         {
             return true;
         }
@@ -79,7 +79,7 @@ class DateTimeHelper
 
     const   NEZALEZI    = -1;
     const   PLAVAJUCI   = 0;
-    public static function timeRestriction(int $rok, int $od_do, int $month = null): string
+    public static function timeRestriction(int $rok, int $od_do, ?int $month = null): string
     {
         $dnesnidatum=date("Y-m-d");
         list($dnrok,$dnmes,$dnden)=explode("-",$dnesnidatum);
@@ -88,14 +88,14 @@ class DateTimeHelper
         $dnmes = intval($dnmes);
         $dnden = intval($dnden);
 
-        if($rok == self::NEZALEZI):
+        if($rok === self::NEZALEZI):
             $omezujicidatum_od = date("Y-m-d",mktime(0,0,0,1,1,1970));
-            $omezujicidatum_do = "2100-12-31"; //date("Y-m-d",mktime(23,59,59,12,31,2100)); 
-        elseif ($rok == self::PLAVAJUCI):
+            $omezujicidatum_do = "2100-12-31"; //date("Y-m-d",mktime(23,59,59,12,31,2100));
+        elseif ($rok === self::PLAVAJUCI):
             $omezujicidatum_od=date("Y-m-d",mktime(0,0,0,$dnmes,$dnden,$dnrok-1));
             $omezujicidatum_do=date("Y-m-d",mktime(23,59,59,$dnmes,$dnden,$dnrok));;
         else:
-            if($month == null)
+            if($month === null)
             {
                 $omezujicidatum_od=date("Y-m-d",mktime(0,0,0,1,1,$rok));
                 $omezujicidatum_do=date("Y-m-d",mktime(23,59,59,12,31,$rok));
@@ -113,7 +113,7 @@ class DateTimeHelper
         $omezujicidatum_do=$omezujicidatum_do." 23:59:59";
         $omezujicidatum_od=$omezujicidatum_od." 00:00:00";
 
-        if($od_do == 0) 
+        if($od_do === 0)
         {  
             return $omezujicidatum_od;
         } 
@@ -123,13 +123,13 @@ class DateTimeHelper
         };  
     }
 
-    public static function timeRestrictionFrom(int $rok, int $month = null): string
+    public static function timeRestrictionFrom(int $rok, ?int $month = null): string
     { 
         return DateTimeHelper::timeRestriction($rok,0,$month);
     }
 
 
-    public static function timeRestrictionTo(int $rok, int $month = null): string
+    public static function timeRestrictionTo(int $rok, ?int $month = null): string
     { 
         return DateTimeHelper::timeRestriction($rok,1,$month);
     }	

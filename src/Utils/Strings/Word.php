@@ -102,7 +102,7 @@ final class Word
 	
 			// Word likes to insert extra <font> tags, when using MSIE. (Wierd).
 			$oldText = "";
-			while( $oldText != $text )
+			while( $oldText !== $text )
 			{
 				$oldText = $text;
 				$text = \Nette\Utils\Strings::replace($oldText, ' /<em><\/em>/i', '');

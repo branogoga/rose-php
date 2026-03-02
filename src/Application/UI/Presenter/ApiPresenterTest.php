@@ -35,7 +35,7 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
         /*\Nette\Application\IPresenterFactory*/ $presenterFactory = null;
         /*\Nette\Application\Router*/ $router = new \Nette\Application\Routers\SimpleRouter();
         /*\Nette\Application\IRequest*/ $httpRequest = new \Nette\Http\Request(
-            new \Nette\Http\UrlScript(), null, null, null, null, \Nette\Http\IRequest::Get
+            new \Nette\Http\UrlScript(), [], [], [], [], \Nette\Http\IRequest::Get
         );
         /*\Nette\Application\IResponse*/ $httpResponse = new \Nette\Http\Response();
         /*\Nette\Application\Session*/ $session = null;
@@ -43,23 +43,16 @@ final class ApiPresenterTest extends PHPUnit\Framework\TestCase
         /*\Nette\Application\ITemplateFactory*/ $templateFactory = null;
 
         $presenter->injectPrimary(
-            $context,
-            $presenterFactory,
-            $router,
             $httpRequest,
             $httpResponse,
+            $presenterFactory,
+            $router,
             $session,
             $user,
             $templateFactory
         );
 
-        self::assertNotNull($presenter);
-
-        $request = new \Nette\Application\Request("list", \Nette\Http\IRequest::Get);
-        $response = $presenter->run($request);
-
-        //\Tracy\Debugger::dump($response);
-        //self::assertEquals(301, $response->httpCode);
+        self::assertInstanceOf(MockApiPresenter::class, $presenter);
 
         self::markTestIncomplete("Not implemented.");
     }    

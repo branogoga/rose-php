@@ -160,7 +160,7 @@ abstract class ApiPresenter extends Presenter
         return "list";
     }
 
-    public function actionList(string $order = null, int $limit = 100, int $page = 0): void
+    public function actionList(?string $order = null, int $limit = 100, int $page = 0): void
     {
         if(!$this->user->isAllowed(
             $this->getActionListResource(), 
@@ -171,7 +171,7 @@ abstract class ApiPresenter extends Presenter
         }
     }
 
-    public function renderList(string $order = null, int $limit = 100, int $page = 0): void
+    public function renderList(?string $order = null, int $limit = 100, int $page = 0): void
     {
         $query = $this->getListQuery($limit, $page);
 
@@ -335,12 +335,12 @@ abstract class ApiPresenter extends Presenter
         $request = $this->getHttpRequest();
         $body = $request->getRawBody();
 
-        if(!is_string($body) || strlen($body) == 0)
+        if(!is_string($body) || strlen($body) === 0)
         {
             throw new \Nette\Application\BadRequestException("Action 'add' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
+        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
 
@@ -416,12 +416,12 @@ abstract class ApiPresenter extends Presenter
         $request = $this->getHttpRequest();
         $body = $request->getRawBody();        
 
-        if(!is_string($body) || strlen($body) == 0)
+        if(!is_string($body) || strlen($body) === 0)
         {
             throw new \Nette\Application\BadRequestException("Action 'edit' required non-empty body.");
         }
         
-        $json = \Nette\Utils\Json::decode($body, \Nette\Utils\Json::FORCE_ARRAY);
+        $json = \Nette\Utils\Json::decode($body, forceArrays: true);
         \Tracy\Debugger::barDump($json, "JSON");
         $this->doValidation($json);
         
