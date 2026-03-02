@@ -1,4 +1,7 @@
 parameters:
+	level: 5
+	paths:
+		- src
 	scanDirectories:
 		- src
 	scanFiles:
