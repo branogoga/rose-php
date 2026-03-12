@@ -25,7 +25,8 @@
         "phpstan/phpstan-strict-rules": ">1"
     },
     "autoload": {
-        "classmap": ["src"]
+        "classmap": ["src"],
+        "exclude-from-classmap": ["src/**/*Test.php"]
     },
     "extra": {
         "phpstan": {
