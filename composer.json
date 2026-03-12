@@ -26,7 +26,7 @@
     },
     "autoload": {
         "classmap": ["src"],
-        "exclude-from-classmap": ["src/**/*Test.php"]
+        "exclude-from-classmap": ["src/**/*Test.php", "src/*Test.php"]
     },
     "extra": {
         "phpstan": {
