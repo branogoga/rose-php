@@ -98,6 +98,55 @@ abstract class ApiPresenter extends Presenter
     protected abstract function validate(array $data): array;
     protected abstract function getResource(): \Nette\Security\Resource;
 
+    /**
+     * Whether to allow a mutating request that carries neither an Origin nor a Referer
+     * header to proceed. Off by default; override to return true only for presenters
+     * that legitimately expect non-browser clients (server-to-server, mobile apps) which
+     * may not send either header.
+     */
+    protected function allowMissingOriginCheck(): bool
+    {
+        return false;
+    }
+
+    /**
+     * CSRF guard for mutating actions: rejects cross-site requests independent of the
+     * session cookie's SameSite setting, since consuming apps may run SameSite=None or
+     * be accessed from older browsers where SameSite offers no protection.
+     */
+    protected function checkSameOrigin(): void
+    {
+        $request = $this->getHttpRequest();
+        $host = $request->getUrl()->getHost();
+
+        $origin = $request->getHeader('Origin');
+        if($origin !== null)
+        {
+            if(parse_url($origin, PHP_URL_HOST) !== $host)
+            {
+                throw new \Nette\Application\ForbiddenRequestException("Cross-site request rejected: Origin header does not match the current host.");
+            }
+
+            return;
+        }
+
+        $referer = $request->getHeader('Referer');
+        if($referer !== null)
+        {
+            if(parse_url($referer, PHP_URL_HOST) !== $host)
+            {
+                throw new \Nette\Application\ForbiddenRequestException("Cross-site request rejected: Referer header does not match the current host.");
+            }
+
+            return;
+        }
+
+        if(!$this->allowMissingOriginCheck())
+        {
+            throw new \Nette\Application\ForbiddenRequestException("Cross-site request rejected: missing Origin and Referer headers.");
+        }
+    }
+
     protected function getActionCountResource(): \Nette\Security\Resource
     {
         return $this->getResource();
@@ -321,6 +370,8 @@ abstract class ApiPresenter extends Presenter
 
     public function actionAdd(): void
     {
+        $this->checkSameOrigin();
+
         if(!$this->user->isAllowed(
             $this->getActionAddResource(),
             $this->getActionAddPermission()
@@ -401,6 +452,8 @@ abstract class ApiPresenter extends Presenter
 
     public function actionEdit( int $id ): void
     {
+        $this->checkSameOrigin();
+
         if(!$this->user->isAllowed(
             $this->getActionEditResource($id), 
             $this->getActionEditPermission()
@@ -480,6 +533,8 @@ abstract class ApiPresenter extends Presenter
 
     public function actionDelete( int $id ): void
     {
+        $this->checkSameOrigin();
+
         if(!$this->user->isAllowed(
             $this->getActionDeleteResource($id),
             $this->getActionDeletePermission()
